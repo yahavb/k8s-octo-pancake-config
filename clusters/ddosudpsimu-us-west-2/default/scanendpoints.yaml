@@ -15,8 +15,8 @@ spec:
       maxUnavailable: 100%
   template:
     metadata:
-      labels:
-        app: scanendpoints
+#      labels:
+#        app: scanendpoints
     spec:
       nodeSelector:
         karpenter.sh/provisioner-name: ddos
