@@ -1,0 +1,52 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: scanendpoints
+  name: scanendpoints
+  namespace: default
+spec:
+  replicas: 1
+  #selector:
+  #  matchLabels:
+  #    app: scanendpoints
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 100%
+      maxUnavailable: 100%
+  template:
+    metadata:
+      labels:
+        app: scanendpoints
+    spec:
+      nodeSelector:
+        karpenter.sh/provisioner-name: ddos
+      containers:
+        - name: scanendpoints
+          envFrom:
+            - secretRef:
+                name: db-creds
+          env:
+            - name: UDP_FLOOD_PACKET_SIZE
+              value: "3"
+            - name: NUM_OF_FLOOD_THREADS
+              value: "10"
+            - name: SLEEP_BETWEEN_FLOOD
+              value: "0.01"
+            - name: UDP_PORT_RANGE_SECTION_SIZE
+              value: "1000"
+            - name: UDP_PORT_MIN
+              value: "32773" #https://docs.aws.amazon.com/vpc/latest/userguide/vpc-network-acls.html
+            - name: UDP_PORT_MAX
+              value: "60963"
+          image: 441218111557.dkr.ecr.us-west-2.amazonaws.com/udpflooder:aarch64
+          imagePullPolicy: Always
+          command: ["/scanendpoints.py"]
+          resources:
+            requests:
+              cpu: 8192m
+              memory: 8192Mi
+            limits:
+              cpu: 8192m
+              memory: 8192Mi
