@@ -100,7 +100,7 @@ spec:
         lifecycle:
           preStop:
             exec:
-              command: ["/bin/sh","-c","/srv-sigstop.sh > /proc/1/fd/1"]
+              command: ["/bin/sh","-c","/srv-sigstop.sh > /proc/1/fd/1 && sleep 120"]
         livenessProbe:
           exec:
             command:
