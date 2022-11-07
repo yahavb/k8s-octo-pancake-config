@@ -54,8 +54,8 @@ roleRef:
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  labels:
-    app: appsimulator
+  #labels:
+  #  app: appsimulator
   name: appsimulator
   namespace: default
 spec:
