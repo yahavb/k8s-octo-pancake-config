@@ -83,7 +83,7 @@ spec:
         - name: DEPLOY_NAME
           value: "appsimulator"
         - name: RADIAN_INTERVAL
-          value: "0.03" # full cycle formula = $RADIAN_MAX/$RADIAN_INTERVAL*AVG($MIN_SLEEP_BETWEEN_CYCLE,$MAX_SLEEP_BETWEEN_CYCLE)/61 eg,0.168 takes ~3 hours, 0.03 takes ~17 hours
+          value: "0.03" # full cycle length formula = $RADIAN_MAX/$RADIAN_INTERVAL*AVG($MIN_SLEEP_BETWEEN_CYCLE,$MAX_SLEEP_BETWEEN_CYCLE)/60(min) eg,0.168 takes ~3 hours, 0.03 takes ~17 hours
         - name: RADIAN_MAX
           value: "3.14"
         - name: MIN_AT_CYCLE_START
