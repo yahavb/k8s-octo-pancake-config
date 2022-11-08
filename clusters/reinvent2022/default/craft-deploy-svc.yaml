@@ -25,6 +25,7 @@ metadata:
   labels:
     app: craft
   name: craft
+  namespace: default
 spec:
   replicas: 1
   selector:
