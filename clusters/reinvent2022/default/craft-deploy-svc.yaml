@@ -28,7 +28,7 @@ metadata:
   name: craft
   namespace: default
 spec:
-  replicas: 1
+#  replicas: 1
   selector:
     matchLabels:
       app: craft
