@@ -1,0 +1,35 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: craftbuilder
+  name: craftbuilder
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: craftbuilder
+  template:
+    metadata:
+      name: craftbuilder
+      labels:
+        app: craftbuilder
+    spec:
+      nodeSelector:
+        karpenter.sh/provisioner-name: craft
+      containers:
+        - name: craftbuilder
+          envFrom:
+            - secretRef:
+                name: craft
+          env:
+            - name: CRAFT_HOST
+              value: craft-e98dadd33f3d9cc0.elb.us-west-2.amazonaws.com
+          image: 124902971876.dkr.ecr.us-west-2.amazonaws.com/craftci:20221110214652-arm64v8-python2
+          imagePullPolicy: Always
+          command: ["python","/write-reinvent2022.py"]
+          resources:
+            requests:
+              cpu: 1024m
+              memory: 1024Mi
