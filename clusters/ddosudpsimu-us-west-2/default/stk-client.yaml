@@ -47,12 +47,12 @@ spec:
         - name: SLEEP_B4_PUT_CW
           value: "60"
         - name: GAME_VERSION
-          value: "20221113205541" 
+          value: "20221113234851" 
         - name: POD_NAME
           valueFrom:
             fieldRef:
               fieldPath: metadata.name
-        image: 441218111557.dkr.ecr.us-west-2.amazonaws.com/stk:20221113205541
+        image: 441218111557.dkr.ecr.us-west-2.amazonaws.com/stk:20221113234851
         lifecycle:
           preStop:
             exec:
