@@ -7,6 +7,15 @@ spec:
     resources:
       cpu: 20k
   provider:
+    amiFamily: AL2
+    blockDeviceMappings:
+      - deviceName: /dev/xvda
+        ebs:
+          volumeSize: 100Gi
+          volumeType: gp3
+          iops: 10000
+          deleteOnTermination: true
+          throughput: 125
     securityGroupSelector:
       karpenter.sh/discovery: ddosudpsimu-us-west-2
     subnetSelector:
