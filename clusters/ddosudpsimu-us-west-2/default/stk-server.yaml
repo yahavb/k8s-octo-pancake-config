@@ -82,7 +82,7 @@ spec:
         - name: MODE
           value: "0"
         - name: MISC_ARGS
-          value: "--owner-less --auto-connect --log=0"
+          value: "--owner-less --auto-connect --log=0 --connection-debug"
         - name: MAX_PLAYERS
           value: "24"
         - name: APP
@@ -91,7 +91,7 @@ spec:
           valueFrom:
             fieldRef:
               fieldPath: status.podIP
-        image: 441218111557.dkr.ecr.us-west-2.amazonaws.com/stk:20221113052936
+        image: 441218111557.dkr.ecr.us-west-2.amazonaws.com/stk:20221113063431
         imagePullPolicy: Always
         command: ["/start-server.sh"]
         securityContext:
