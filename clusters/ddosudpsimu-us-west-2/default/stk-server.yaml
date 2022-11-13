@@ -59,7 +59,7 @@ metadata:
   name: stksrv
   namespace: default
 spec:
-  #replicas: 0
+  replicas: 0
   selector:
     matchLabels:
       app: stksrv
