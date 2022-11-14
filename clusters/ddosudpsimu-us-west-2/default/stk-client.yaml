@@ -45,7 +45,7 @@ spec:
         - name: NETWORK_AI
           value: "8"
         - name: SLEEP_B4_PUT_CW
-          value: "60"
+          value: "10"
         - name: GAME_VERSION
           value: "20221114051141" 
         - name: POD_NAME
