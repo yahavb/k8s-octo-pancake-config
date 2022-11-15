@@ -52,7 +52,7 @@ spec:
           valueFrom:
             fieldRef:
               fieldPath: metadata.name
-        image: 441218111557.dkr.ecr.us-west-2.amazonaws.com/stk:20221115181434
+        image: 441218111557.dkr.ecr.us-west-2.amazonaws.com/stk:20221115183900
         lifecycle:
           preStop:
             exec:
