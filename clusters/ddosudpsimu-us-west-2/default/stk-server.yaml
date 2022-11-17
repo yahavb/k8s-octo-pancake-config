@@ -59,7 +59,7 @@ metadata:
   name: stksrv
   namespace: default
 spec:
-  #replicas: 1
+  replicas: 1
   selector:
     matchLabels:
       app: stksrv
@@ -91,6 +91,10 @@ spec:
           valueFrom:
             fieldRef:
               fieldPath: status.podIP
+        - name: POD_NAME
+          valueFrom:
+            fieldRef:
+              fieldPath: metadata.name
         image: 441218111557.dkr.ecr.us-west-2.amazonaws.com/stk:20221116051059
         imagePullPolicy: Always
         command: ["/start-server.sh"]
