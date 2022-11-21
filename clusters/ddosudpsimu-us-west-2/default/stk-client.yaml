@@ -56,7 +56,8 @@ spec:
         lifecycle:
           preStop:
             exec:
-              command: ["/bin/sh","-c","/cli-sigstop.sh > /proc/1/fd/1"]
+              command: ["/bin/sh","-c","/cli-sigstop.sh"]
+              #command: ["/bin/sh","-c","/cli-sigstop.sh > /proc/1/fd/1"]
         imagePullPolicy: Always
         command:
         - /start-client.sh
