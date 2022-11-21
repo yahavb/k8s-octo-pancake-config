@@ -95,7 +95,7 @@ spec:
           valueFrom:
             fieldRef:
               fieldPath: metadata.name
-        image: 441218111557.dkr.ecr.us-west-2.amazonaws.com/stk:20221118210931
+        image: 441218111557.dkr.ecr.us-west-2.amazonaws.com/stk:20221121024947
         imagePullPolicy: Always
         command: ["/start-server.sh"]
         securityContext:
