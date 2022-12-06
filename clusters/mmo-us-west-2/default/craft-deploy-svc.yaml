@@ -28,6 +28,7 @@ metadata:
   name: craft
   namespace: default
 spec:
+  replicas: 1
   selector:
     matchLabels:
       app: craft
@@ -68,7 +69,7 @@ spec:
               value: "craft"
             - name: SCALE_UP_COOLDOWN
               value: "60"
-          image: 095974399802.dkr.ecr.us-west-2.amazonaws.com/craftci:20221108204926-arm64v8-python2
+          image: 124902971876.dkr.ecr.us-west-2.amazonaws.com/craftci:20221110180613-arm64v8-python2
           imagePullPolicy: Always
           command: ["/start.sh"]
           readinessProbe:
@@ -88,5 +89,5 @@ spec:
                 command: ["/bin/sh", "-c", "kill $(ps aux | grep server.py| grep -v grep| awk '{print $2}') && sleep 120"]
           resources:
             requests:
-              cpu: 2048m
-              memory: 2048Mi
+              cpu: 1024m
+              memory: 1024Mi

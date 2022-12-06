@@ -1,0 +1,41 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: appupdate
+  name: appupdate
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: appupdate
+  template:
+    metadata:
+      labels:
+        app: appupdate
+    spec:
+      nodeSelector:
+        karpenter.sh/provisioner-name: orders
+      containers:
+        - name: appupdate
+          envFrom:
+            - secretRef:
+                name: orders
+          env:
+            - name: QUEUE_URL
+              value: "https://sqs.us-west-2.amazonaws.com/124902971876/orders"
+            - name: NUM_OF_UPDATE_THREADS
+              value: "100"
+            - name: SLEEP_BETWEEN
+              value: "10"
+          image: 124902971876.dkr.ecr.us-west-2.amazonaws.com/simu-app-load:aarch64
+          imagePullPolicy: Always
+          command: ["/app-update.sh"]
+          resources:
+            requests:
+              cpu: 512m
+              memory: 512Mi
+            limits:
+              cpu: 512m
+              memory: 512Mi
+      hostNetwork: true

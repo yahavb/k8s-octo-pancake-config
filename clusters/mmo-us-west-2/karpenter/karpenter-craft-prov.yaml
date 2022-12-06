@@ -23,6 +23,6 @@ metadata:
   name: craft
 spec:
   subnetSelector:
-    karpenter.sh/discovery: reinvent2022
+    karpenter.sh/discovery: mmo-us-west-2
   securityGroupSelector:
-    karpenter.sh/discovery: reinvent2022
+    karpenter.sh/discovery: mmo-us-west-2

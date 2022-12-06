@@ -1,0 +1,10 @@
+apiVersion: v1
+data:
+  PGHOST: b3JkZXJzZGIuZW5kcG9pbnQucHJveHktY25lc3doZmtqcm93LnVzLXdlc3QtMi5yZHMuYW1hem9uYXdzLmNvbQ==
+  PGPASSWORD: dVViR3VDOTJFNjk=
+  PGUSER: cG9zdGdyZXM=
+kind: Secret
+metadata:
+  creationTimestamp: null
+  name: orders
+  namespace: default

@@ -1,0 +1,20 @@
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: vacuum-pgp
+spec:
+  schedule: "* * * * *"
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          containers:
+          - name: vacuum-pgp
+            envFrom:
+              - secretRef:
+                  name: orders
+            env:
+            image: 124902971876.dkr.ecr.us-west-2.amazonaws.com/simu-app-load:aarch64
+            imagePullPolicy: Always
+            command: ["/vacuum.sh"]
+          restartPolicy: OnFailure 
