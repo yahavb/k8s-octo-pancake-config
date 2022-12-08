@@ -6,7 +6,7 @@ metadata:
 spec:
   limits:
     resources:
-      cpu: 30k
+      cpu: 31k
   provider:
     amiFamily: AL2
     blockDeviceMappings:
