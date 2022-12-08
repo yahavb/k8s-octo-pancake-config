@@ -5,13 +5,13 @@ metadata:
 spec:
   limits:
     resources:
-      cpu: 21k
+      cpu: 31k
   provider:
     amiFamily: AL2
     blockDeviceMappings:
       - deviceName: /dev/xvda
         ebs:
-          volumeSize: 100Gi
+          volumeSize: 200Gi
           volumeType: gp3
           iops: 10000
           deleteOnTermination: true
