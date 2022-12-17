@@ -1,0 +1,35 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: apploader
+  name: apploader
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: apploader
+  template:
+    metadata:
+      labels:
+        app: apploader
+    spec:
+      nodeSelector:
+        karpenter.sh/provisioner-name: default
+      serviceAccountName: appsimulator
+      containers:
+      - env:
+        - name: SLEEP_BETWEEN_CYCLE
+          value: "10"
+        - name: APP_URL
+          value: "http://django-app-1165248039.us-west-2.elb.amazonaws.com/logistics"
+        - name: DEPLOY_NAME
+          value: "appsimulator"
+        image: 274739860030.dkr.ecr.us-west-2.amazonaws.com/loader:py39arm64
+        name: apploader
+        command: ["/app-loader.sh"]
+        resources:
+          requests:
+            cpu: 128m
+            memory: 128Mi
