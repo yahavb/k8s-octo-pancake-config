@@ -6,13 +6,13 @@ spec:
   requirements:
     - key: karpenter.sh/capacity-type
       operator: In
-      values: ["spot","on-demand"]
+      values: ["on-demand"]
     - key: kubernetes.io/arch
       operator: In
       values: ["arm64"]
   limits:
     resources:
-      cpu: 90000
+      cpu: 100000
   provider:
     amiFamily: AL2
     blockDeviceMappings:

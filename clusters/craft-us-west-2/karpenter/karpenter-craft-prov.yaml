@@ -23,6 +23,6 @@ metadata:
   name: craft
 spec:
   subnetSelector:
-    karpenter.sh/discovery: mmo-us-west-2
+    karpenter.sh/discovery: craft-usw2
   securityGroupSelector:
-    karpenter.sh/discovery: mmo-us-west-2
+    karpenter.sh/discovery: craft-usw2

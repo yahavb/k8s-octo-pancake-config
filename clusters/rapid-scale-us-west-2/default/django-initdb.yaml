@@ -1,0 +1,32 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: initdb
+spec:
+  template:
+    spec:
+      nodeSelector:
+        karpenter.sh/provisioner-name: default
+      serviceAccountName: appsimulator
+      containers:
+      - name: initdb
+        volumeMounts:
+        - name: secrets-store-orders
+          mountPath: "/mnt/secrets"
+        env:
+        - name: SECRET_FILE
+          value: "/mnt/secrets/rapidscaleSecretFD8D90A13fd-erW3rRZJDUbZ"
+        #envFrom:
+        #- secretRef:
+        #   name: orders
+        image: 274739860030.dkr.ecr.us-west-2.amazonaws.com/djangoapp:py39arm64
+        imagePullPolicy: Always
+        command: ["/usr/src/app/initdb.sh"]
+      volumes:
+      - name: secrets-store-orders
+        csi:
+          driver: secrets-store.csi.k8s.io
+          readOnly: true 
+          volumeAttributes:
+            secretProviderClass: rapidscale
+      restartPolicy: Never

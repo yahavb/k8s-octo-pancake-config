@@ -42,13 +42,19 @@ spec:
       nodeSelector:
         karpenter.sh/provisioner-name: craft
       serviceAccountName: adaptivecraft
-      #terminationGracePeriodSeconds: 120
+      volumes:
+      - name: secrets-store-craft
+        csi:
+          driver: secrets-store.csi.k8s.io
+          readOnly: true
+          volumeAttributes:
+            secretProviderClass: craft
       containers:
-        - name: craft
-          envFrom:
-            - secretRef:
-                name: craft
-          env:
+      - name: initdb
+        volumeMounts:
+        - name: secrets-store-craft
+          mountPath: "/mnt/secrets"
+        env:
             - name: MY_NODE_NAME
               valueFrom:
                 fieldRef:
@@ -61,7 +67,7 @@ spec:
               value: "4080"
             - name: BUFFER_SIZE
               value: "8192"
-            - name: SPAWN_POINT
+            - name: START_POINT
               value: "(32,13,32,25,0)"
             - name: MAX_SESSIONS_IN_GS
               value: "3"
@@ -69,25 +75,33 @@ spec:
               value: "craft"
             - name: SCALE_UP_COOLDOWN
               value: "60"
-          image: 124902971876.dkr.ecr.us-west-2.amazonaws.com/craftci:20221110180613-arm64v8-python2
-          imagePullPolicy: Always
-          command: ["/start.sh"]
-          readinessProbe:
+            - name: USE_AUTH
+              value: "False"
+            - name: RECORD_HISTORY
+              value: "true"
+            - name: AUTH_SRV
+              value: "https://craft.michaelfogleman.com/api/1/access"
+            - name: SECRET_FILE
+              value: "/mnt/secrets/craftcraftusw2SecretAA604F6-CbrgEOMoOlpW"
+        image: 953892292675.dkr.ecr.us-west-2.amazonaws.com/craftci:aarch64py3
+        imagePullPolicy: Always
+        command: ["/start.sh"]
+        readinessProbe:
             exec:
               command:
                 - cat
                 - /tmp/healthy
-          livenessProbe:
-            tcpSocket:
-              port: 4080
-            initialDelaySeconds: 5
-            periodSeconds: 10
-          lifecycle:
+        #livenessProbe:
+        #    tcpSocket:
+        #      port: 4080
+        #    initialDelaySeconds: 5
+        #    periodSeconds: 10
+        lifecycle:
             preStop:
               exec:
                 # Allow existing clients to complete within 120 seconds
                 command: ["/bin/sh", "-c", "kill $(ps aux | grep server.py| grep -v grep| awk '{print $2}') && sleep 120"]
-          resources:
+        resources:
             requests:
               cpu: 1024m
               memory: 1024Mi

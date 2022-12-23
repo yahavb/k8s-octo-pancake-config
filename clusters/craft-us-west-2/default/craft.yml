@@ -1,0 +1,12 @@
+apiVersion: v1
+data:
+  PGDATABASE: cG9zdGdyZXM=
+  PGHOST: Y3JhZnRzZXJ2ZXJsZXNzLmNsdXN0ZXItY25lc3doZmtqcm93LnVzLXdlc3QtMi5yZHMuYW1hem9uYXdzLmNvbQ==
+  PGPASSWORD: dVViR3VDOTJFNjk=
+  PGPORT: NTQzMg==
+  PGUSER: cG9zdGdyZXM=
+kind: Secret
+metadata:
+  creationTimestamp: null
+  name: craft
+  namespace: default

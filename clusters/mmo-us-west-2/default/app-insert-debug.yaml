@@ -1,0 +1,38 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: debugappinsert
+  name: debugappinsert
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: debugappinsert
+  template:
+    metadata:
+      labels:
+        app: debugappinsert
+    spec:
+      nodeSelector:
+        karpenter.sh/provisioner-name: orders
+      containers:
+        - name: debugappinsert
+          envFrom:
+            - secretRef:
+                name: orders
+          env:
+            - name: QUEUE_URL
+              value: "https://sqs.us-west-2.amazonaws.com/124902971876/orders"
+            - name: NUM_OF_INSERT_THREADS
+              value: "15"
+            - name: SLEEP_BETWEEN
+              value: "20"
+          image: 124902971876.dkr.ecr.us-west-2.amazonaws.com/simu-app-load:aarch64-debug
+          imagePullPolicy: Always
+          command: ["/app-insert.sh"]
+          resources:
+            requests:
+              cpu: 512m
+              memory: 512Mi
+      hostNetwork: true

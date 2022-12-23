@@ -2,11 +2,10 @@ apiVersion: karpenter.sh/v1alpha5
 kind: Provisioner
 metadata:
   name: default
-  namespace: karpenter
 spec:
   limits:
     resources:
-      cpu: 31k
+      cpu: 20k
   provider:
     amiFamily: AL2
     blockDeviceMappings:
