@@ -1,0 +1,87 @@
+apiVersion: "agones.dev/v1"
+kind: Fleet
+metadata:
+  name: craft-fleet
+spec:
+  replicas: 1
+  scheduling: Packed
+  template:
+    metadata:
+      labels:
+        game: craft
+    spec:
+      ports:
+      - name: default
+        portPolicy: Dynamic
+        containerPort: 4080
+        protocol: TCP
+      health:
+        disabled: false
+        initialDelaySeconds: 10
+        periodSeconds: 15
+        failureThreshold: 3
+      template:
+        spec:
+          nodeSelector:
+            karpenter.sh/provisioner-name: craft
+          serviceAccountName: adaptivecraft
+          containers:
+          - name: gs
+            volumeMounts:
+            - name: secrets-store-craft
+              mountPath: "/mnt/secrets"
+            env:
+            - name: IS_AGONES
+              value: "True"
+            - name: MY_NODE_NAME
+              valueFrom:
+                fieldRef:
+                  fieldPath: spec.nodeName
+            - name: MY_POD_NAME
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.name
+            - name: SERVERPORT
+              value: "4080"
+            - name: BUFFER_SIZE
+              value: "8192"
+            - name: START_POINT
+              value: "(32,13,32,25,0)"
+            - name: MAX_SESSIONS_IN_GS
+              value: "3"
+            - name: DEPLOY_NAME
+              value: "craft"
+            - name: SCALE_UP_COOLDOWN
+              value: "60"
+            - name: USE_AUTH
+              value: "False"
+            - name: RECORD_HISTORY
+              value: "true"
+            - name: AUTH_SRV
+              value: "https://craft.michaelfogleman.com/api/1/access"
+            - name: SECRET_FILE
+              value: "/mnt/secrets/craftcraftusw2SecretAA604F6-CbrgEOMoOlpW"
+            image: 953892292675.dkr.ecr.us-west-2.amazonaws.com/craftci:aarch64py3agones
+            imagePullPolicy: Always
+            command: ["/start.sh"]
+            readinessProbe:
+              exec:
+                command:
+                  - cat
+                  - /tmp/healthy
+            livenessProbe:
+              tcpSocket:
+                port: 4080
+              initialDelaySeconds: 5
+              periodSeconds: 10
+            resources:
+              requests:
+                cpu: 1024m
+                memory: 1024Mi 
+          volumes:
+          - name: secrets-store-craft
+            csi:
+              driver: secrets-store.csi.k8s.io
+              readOnly: true
+              volumeAttributes:
+                secretProviderClass: craft
