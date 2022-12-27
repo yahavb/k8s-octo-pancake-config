@@ -7,12 +7,17 @@ spec:
     spec:
       nodeSelector:
         karpenter.sh/provisioner-name: craft
+      serviceAccountName: adaptivecraft
       restartPolicy: OnFailure
       containers:
         - name: craftbuilder
           env:
+            - name: SQS_CHECKPOINT_QUEUE_URL
+              value: "https://sqs.us-west-2.amazonaws.com/953892292675/craft-builder-checkpoint"
             - name: CRAFT_HOST
               value: craft.yahav.sa.aws.dev
+            - name: CRAFT_PORT
+              value: "4080"
           image: 953892292675.dkr.ecr.us-west-2.amazonaws.com/craftci:aarch64py3
           imagePullPolicy: Always
           command: ["python","/craft/builder.py"]

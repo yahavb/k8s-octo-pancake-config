@@ -1,0 +1,31 @@
+apiVersion: karpenter.sh/v1alpha5
+kind: Provisioner
+metadata:
+  name: craft
+spec:
+#  taints: 
+#    - key: agones.dev/agones-system
+#      effect: NoSchedule
+  requirements:
+    - key: karpenter.sh/capacity-type
+      operator: In
+      values: ["spot","on-demand"]
+    - key: kubernetes.io/arch
+      operator: In
+      values: ["arm64"]
+  limits:
+    resources:
+      cpu: 10000
+  providerRef:
+    name: craft
+  ttlSecondsAfterEmpty: 30
+---
+apiVersion: karpenter.k8s.aws/v1alpha1
+kind: AWSNodeTemplate
+metadata:
+  name: craft
+spec:
+  subnetSelector:
+    karpenter.sh/discovery: craft-usw2-public
+  securityGroupSelector:
+    karpenter.sh/discovery: craft-usw2

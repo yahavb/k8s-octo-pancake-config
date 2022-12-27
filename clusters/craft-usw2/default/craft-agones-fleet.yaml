@@ -54,11 +54,11 @@ spec:
             - name: SCALE_UP_COOLDOWN
               value: "60"
             - name: USE_AUTH
-              value: "False"
+              value: "True"
             - name: RECORD_HISTORY
               value: "true"
             - name: AUTH_SRV
-              value: "https://craft.michaelfogleman.com/api/1/access"
+              value: "http://craft.auth.yahav.sa.aws.dev/auth/identity/"
             - name: SECRET_FILE
               value: "/mnt/secrets/craftcraftusw2SecretAA604F6-CbrgEOMoOlpW"
             image: 953892292675.dkr.ecr.us-west-2.amazonaws.com/craftci:aarch64py3agones

@@ -1,0 +1,29 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: craft-auth-initdb
+spec:
+  template:
+    spec:
+      nodeSelector:
+        karpenter.sh/provisioner-name: craft
+      serviceAccountName: adaptivecraft
+      containers:
+      - name: initdb
+        volumeMounts:
+        - name: secrets-store-craft
+          mountPath: "/mnt/secrets"
+        env:
+        - name: SECRET_FILE
+          value: "/mnt/secrets/craftcraftusw2SecretAA604F6-CbrgEOMoOlpW"
+        image: 953892292675.dkr.ecr.us-west-2.amazonaws.com/authapp:py39arm64
+        imagePullPolicy: Always
+        command: ["/usr/src/app/initdb.sh"]
+      volumes:
+      - name: secrets-store-craft
+        csi:
+          driver: secrets-store.csi.k8s.io
+          readOnly: true 
+          volumeAttributes:
+            secretProviderClass: craft
+      restartPolicy: Never
