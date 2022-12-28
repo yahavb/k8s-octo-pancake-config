@@ -64,7 +64,7 @@ spec:
           value: "/mnt/secrets/craftcraftusw2SecretAA604F6-CbrgEOMoOlpW"
         readinessProbe:
           httpGet:
-            path: /auth/health/
+            path: /auth/health
             port: 8000
           initialDelaySeconds: 3
           periodSeconds: 3

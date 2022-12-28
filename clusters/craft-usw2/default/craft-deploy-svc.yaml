@@ -41,6 +41,7 @@ spec:
       shareProcessNamespace: true
       nodeSelector:
         karpenter.sh/provisioner-name: craft
+      #terminationGracePeriodSeconds: 120
       serviceAccountName: adaptivecraft
       volumes:
       - name: secrets-store-craft
@@ -69,8 +70,12 @@ spec:
               value: "4080"
             - name: BUFFER_SIZE
               value: "8192"
-            - name: START_POINT
-              value: "(32,13,32,25,0)"
+            - name: SPAWN_X
+              value: "832"
+            - name: SPAWN_Y
+              value: "37"
+            - name: SPAWN_Z
+              value: "192"
             - name: MAX_SESSIONS_IN_GS
               value: "3"
             - name: DEPLOY_NAME
@@ -85,7 +90,7 @@ spec:
               value: "http://craft.auth.yahav.sa.aws.dev/auth/identity/"
             - name: SECRET_FILE
               value: "/mnt/secrets/craftcraftusw2SecretAA604F6-CbrgEOMoOlpW"
-        image: 953892292675.dkr.ecr.us-west-2.amazonaws.com/craftci:aarch64py3
+        image: 953892292675.dkr.ecr.us-west-2.amazonaws.com/craftci:arm64py3
         imagePullPolicy: Always
         command: ["/start.sh"]
         readinessProbe:
