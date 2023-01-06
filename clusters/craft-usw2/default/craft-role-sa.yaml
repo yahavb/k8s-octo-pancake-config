@@ -27,6 +27,9 @@ rules:
   - gameservers
   - pods
   - deployments
+  - deployments/scale
+  - fleets
+  - fleets/scale
   verbs:
   - get
   - list
@@ -34,6 +37,7 @@ rules:
   - create
   - delete
   - update
+  - patch
 ---
 apiVersion: v1
 kind: ServiceAccount

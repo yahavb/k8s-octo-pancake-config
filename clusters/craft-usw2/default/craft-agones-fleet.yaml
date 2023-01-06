@@ -1,7 +1,7 @@
 apiVersion: "agones.dev/v1"
 kind: Fleet
 metadata:
-  name: craft-fleet
+  name: craft
 spec:
   replicas: 1
   scheduling: Packed
@@ -10,6 +10,8 @@ spec:
       labels:
         game: craft
     spec:
+      players:
+        initialCapacity: 3
       ports:
       - name: default
         portPolicy: Dynamic
@@ -21,6 +23,9 @@ spec:
         periodSeconds: 15
         failureThreshold: 3
       template:
+        metadata:
+          labels:
+            app: craft
         spec:
           nodeSelector:
             karpenter.sh/provisioner-name: craft
@@ -78,6 +83,11 @@ spec:
                 port: 4080
               initialDelaySeconds: 5
               periodSeconds: 10
+            lifecycle:
+              preStop:
+                exec:
+                  # Allow existing players to complete within 120 seconds
+                  command: ["/bin/sh", "-c", "kill $(ps aux | grep server.py| grep -v grep| awk '{print $2}') && sleep 120"]
             resources:
               requests:
                 cpu: 1024m
