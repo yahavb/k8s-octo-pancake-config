@@ -1,0 +1,47 @@
+apiVersion: karpenter.sh/v1alpha5
+kind: Provisioner
+metadata:
+  name: stkperf
+spec:
+  limits:
+    resources:
+      cpu: 20k
+  provider:
+    amiFamily: AL2
+    blockDeviceMappings:
+      - deviceName: /dev/xvda
+        ebs:
+          volumeSize: 200Gi
+          volumeType: gp3
+          iops: 10000
+          deleteOnTermination: true
+          throughput: 125
+    securityGroupSelector:
+      karpenter.sh/discovery: ddosudpsimu-us-west-2
+    subnetSelector:
+      karpenter.sh/discovery: ddosudpsimu-us-west-2
+  requirements:
+#  - key: node.kubernetes.io/instance-type
+#    operator: In
+#    values:
+#    - c6g.xlarge
+#    - c6g.2xlarge
+#    - c6g.4xlarge
+#    - c6g.8xlarge
+#    - c6g.12xlarge
+#    - c6g.16xlarge
+  - key: karpenter.k8s.aws/instance-cpu
+    operator: Lt
+    values:
+    - "4"
+  - key: kubernetes.io/arch
+    operator: In
+    values:
+    - arm64
+    - amd64
+  - key: karpenter.sh/capacity-type
+    operator: In
+    values:
+    - spot
+    - on-demand
+  ttlSecondsAfterEmpty: 30

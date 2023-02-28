@@ -55,22 +55,40 @@ spec:
         karpenter.sh/provisioner-name: default
       serviceAccountName: appsimulator
       containers:
-        - name: app
-          envFrom:
-            - secretRef:
-                name: orders
-          readinessProbe:
-            httpGet:
-              path: /logistics/health
-              port: 8000
-            initialDelaySeconds: 3
-            periodSeconds: 3
-          image: 274739860030.dkr.ecr.us-west-2.amazonaws.com/djangoapp:py39arm64
-          imagePullPolicy: Always
-          command: ["/usr/src/app/start.sh"]
-          resources:
-            requests:
-              cpu: 512m
-              memory: 512Mi
-          ports:
-            - containerPort: 8000
+      - name: app
+        volumeMounts:
+        - name: secrets-store-orders
+          mountPath: "/mnt/secrets"
+        env:
+        - name: ORDER_QUEUE
+          value: "https://sqs.us-west-2.amazonaws.com/274739860030/orders"
+        - name: DELIVERY_QUEUE
+          value: "https://sqs.us-west-2.amazonaws.com/274739860030/delivery"
+        - name: SECRET_FILE
+          value: "/mnt/secrets/rapidscaleSecretFD8D90A13fd-erW3rRZJDUbZ"
+        readinessProbe:
+          tcpSocket:
+          #httpGet:
+          #  path: /logistics/health/
+            port: 8000
+          initialDelaySeconds: 5
+          periodSeconds: 10
+        image: 274739860030.dkr.ecr.us-west-2.amazonaws.com/djangoapp:multiarch-py3
+        imagePullPolicy: Always
+        command: ["/usr/src/app/start.sh"]
+        resources:
+          requests:
+            cpu: 700m
+            memory: 1Gi
+          limits:
+            cpu: 700m
+            memory: 6Gi
+        ports:
+          - containerPort: 8000
+      volumes:
+      - name: secrets-store-orders
+        csi:
+          driver: secrets-store.csi.k8s.io
+          readOnly: true
+          volumeAttributes:
+            secretProviderClass: rapidscale

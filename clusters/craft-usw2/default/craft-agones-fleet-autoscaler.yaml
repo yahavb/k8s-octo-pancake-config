@@ -1,0 +1,12 @@
+apiVersion: "autoscaling.agones.dev/v1"
+kind: FleetAutoscaler
+metadata:
+  name: craft-agones-autoscaler
+spec:
+  fleetName: craft
+  policy:
+    type: Buffer
+    buffer:
+      bufferSize: 2
+      minReplicas: 0
+      maxReplicas: 100

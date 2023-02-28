@@ -83,16 +83,22 @@ spec:
         - name: DEPLOY_NAME
           value: "appsimulator"
         - name: RADIAN_INTERVAL
-          value: "0.168"
+          value: "0.2"
         - name: RADIAN_MAX
           value: "3.14"
         - name: MIN_AT_CYCLE_START
+          value: "1"
+        - name: SERVER_SCALE_RATIO
+          value: "1"
+        - name: CLIENT_SCALE_RATIO
           value: "1"
         - name: SERVER_DEPLOY_PREFIX
           value: "django-app"
         - name: CLIENT_DEPLOY_PREFIX
           value: "apploader"
-        image: 274739860030.dkr.ecr.us-west-2.amazonaws.com/loader:py39arm64
+        - name: RULE_ENGINE_DEPLOY_PREFIX
+          value: "ruleengine"
+        image: 274739860030.dkr.ecr.us-west-2.amazonaws.com/loader:multiarch-py3
         imagePullPolicy: Always
         name: appsimulator
         command: ["/appsimulator.sh"]

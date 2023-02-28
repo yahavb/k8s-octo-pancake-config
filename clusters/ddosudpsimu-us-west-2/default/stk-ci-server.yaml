@@ -1,0 +1,120 @@
+kind: ClusterRole
+apiVersion: rbac.authorization.k8s.io/v1
+metadata:
+  name: gs-admin
+  namespace: default
+rules:
+- apiGroups:
+  - ""
+  resources:
+  - "*"
+  verbs:
+  - "*"
+- apiGroups:
+  - rbac.authorization.k8s.io
+  - extensions
+  - apps
+  resources:
+  - "*"
+  verbs:
+  - "*"
+- apiGroups:
+  - apiextensions.k8s.io
+  resources:
+  - customresourcedefinitions
+  - pods
+  - deployments
+  verbs:
+  - get
+  - list
+  - watch
+  - create
+  - delete
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: gs-admin
+  namespace: default
+---
+kind: ClusterRoleBinding
+apiVersion: rbac.authorization.k8s.io/v1
+metadata:
+  name: gs-admin
+  namespace: default
+subjects:
+- kind: ServiceAccount
+  name: gs-admin
+  namespace: default
+roleRef:
+  kind: ClusterRole
+  name: gs-admin
+  apiGroup: rbac.authorization.k8s.io
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: supertuxkartagones
+  name: supertuxkartagones
+  namespace: default
+spec:
+  #replicas: 1
+  selector:
+    matchLabels:
+      app: supertuxkartagones
+  template:
+    metadata:
+      labels:
+        app: supertuxkartagones
+    spec:
+      shareProcessNamespace: true
+      nodeSelector:
+        karpenter.sh/provisioner-name: stkperf
+      hostNetwork: true
+      serviceAccountName: gs-admin
+      containers:
+      - name: stk
+        envFrom:
+          - secretRef:
+              name: db-creds
+        env:
+        - name: IS_AGONES
+          value: "False"
+        - name: MODE
+          value: "0"
+        - name: MISC_ARGS
+          value: "--owner-less --auto-connect --log=0 --connection-debug"
+        - name: MAX_PLAYERS
+          value: "24"
+        - name: APP
+          value: stksrv
+        - name: UDP_SOCKET_IP
+          valueFrom:
+            fieldRef:
+              fieldPath: status.podIP
+        - name: POD_NAME
+          valueFrom:
+            fieldRef:
+              fieldPath: metadata.name
+        image: 441218111557.dkr.ecr.us-west-2.amazonaws.com/stk-ci:stk-server-multiarch
+        imagePullPolicy: Always
+        command: ["/start-server.sh"]
+        securityContext:
+          allowPrivilegeEscalation: true
+          runAsUser: 0 
+        lifecycle:
+          preStop:
+            exec:
+              #command: ["/bin/sh","-c","/srv-sigstop.sh > /proc/1/fd/1 && sleep 120"]
+              command: ["/bin/sh","-c","/srv-sigstop.sh && sleep 60"]
+        livenessProbe:
+          exec:
+            command:
+            - /udp-health-probe.py
+          initialDelaySeconds: 3000
+          periodSeconds: 5000
+        resources:
+          requests:
+            cpu: 512m
+            memory: 512Mi

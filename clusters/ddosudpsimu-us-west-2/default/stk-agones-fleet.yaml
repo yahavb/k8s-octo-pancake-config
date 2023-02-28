@@ -1,0 +1,83 @@
+apiVersion: "agones.dev/v1"
+kind: Fleet
+metadata:
+  name: stkagones
+spec:
+  replicas: 1
+  scheduling: Packed
+  template:
+    metadata:
+      labels:
+        game: stkagones
+    spec:
+      players:
+        inititalCapacity: 40
+      ports:
+      - name: default
+        portPolicy: Dynamic
+        containerPort: 4080
+        protocol: UDP
+      health:
+        #TODO - switch
+        disabled: false
+        initialDelaySeconds: 300
+        periodSeconds: 15
+        failureThreshold: 3
+      template:
+        metadata:
+          labels:
+            game: stk
+        spec:
+          nodeSelector:
+            karpenter.sh/provisioner-name: stkperf
+          serviceAccountName: gs-admin
+          containers:
+          - name: stk
+            envFrom:
+              - secretRef:
+                  name: db-creds
+            env:
+            - name: IS_AGONES
+              value: "True"
+            - name: GAME_SERVER_PORT
+              value: "4080"
+            - name: MODE
+              value: "0"
+            - name: MISC_ARGS
+              value: "--owner-less --auto-connect --log=0 --connection-debug"
+            - name: MAX_PLAYERS
+              value: "24"
+            - name: APP
+              value: stksrv
+            - name: UDP_SOCKET_IP
+              valueFrom:
+                fieldRef:
+                  fieldPath: status.podIP
+            - name: POD_NAME
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.name
+            image: 441218111557.dkr.ecr.us-west-2.amazonaws.com/stk-ci:stk-server-multiarch
+            imagePullPolicy: Always
+            command: ["/start-server.sh"]
+            securityContext:
+              allowPrivilegeEscalation: true
+              runAsUser: 0 
+            lifecycle:
+              preStop:
+                exec:
+                  #command: ["/bin/sh","-c","/srv-sigstop.sh > /proc/1/fd/1 && sleep 120"]
+                  command: ["/bin/sh","-c","/srv-sigstop.sh && sleep 20"]
+            livenessProbe:
+              exec:
+                command:
+                - /udp-health-probe.py
+              initialDelaySeconds: 60
+              periodSeconds: 5 
+            resources:
+              requests:
+                cpu: 512m
+                memory: 512Mi
+              limits:
+                cpu: 512m
+                memory: 512Mi

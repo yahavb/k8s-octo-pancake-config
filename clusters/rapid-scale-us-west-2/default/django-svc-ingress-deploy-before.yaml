@@ -60,19 +60,13 @@ spec:
         - name: secrets-store-orders
           mountPath: "/mnt/secrets"
         env:
+        - name: ORDER_QUEUE
+          value: "https://sqs.us-west-2.amazonaws.com/274739860030/orders"
+        - name: DELIVERY_QUEUE
+          value: "https://sqs.us-west-2.amazonaws.com/274739860030/delivery"
         - name: SECRET_FILE
           value: "/mnt/secrets/rapidscaleSecretFD8D90A13fd-erW3rRZJDUbZ"
-        #- name: app
-        #  envFrom:
-        #    - secretRef:
-        #        name: orders
-        readinessProbe:
-          httpGet:
-            path: /logistics/todaysorders/
-            port: 8000
-          initialDelaySeconds: 3
-          periodSeconds: 3
-        image: 274739860030.dkr.ecr.us-west-2.amazonaws.com/djangoapp:py39arm64
+        image: 274739860030.dkr.ecr.us-west-2.amazonaws.com/djangoapp:multiarch-py3
         imagePullPolicy: Always
         command: ["/usr/src/app/start.sh"]
         resources:

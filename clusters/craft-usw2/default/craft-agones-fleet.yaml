@@ -21,7 +21,7 @@ spec:
         disabled: false
         initialDelaySeconds: 10
         periodSeconds: 15
-        failureThreshold: 3
+        failureThreshold: 10
       template:
         metadata:
           labels:
@@ -70,7 +70,7 @@ spec:
               value: "http://craft.auth.yahav.sa.aws.dev/auth/identity/"
             - name: SECRET_FILE
               value: "/mnt/secrets/craftcraftusw2SecretAA604F6-CbrgEOMoOlpW"
-            image: 953892292675.dkr.ecr.us-west-2.amazonaws.com/craftci:arm64py3
+            image: 953892292675.dkr.ecr.us-west-2.amazonaws.com/craft:multiarch-py3
             imagePullPolicy: Always
             command: ["/start.sh"]
             readinessProbe:

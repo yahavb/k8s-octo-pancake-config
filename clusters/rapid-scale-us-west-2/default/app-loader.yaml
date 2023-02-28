@@ -17,19 +17,26 @@ spec:
     spec:
       nodeSelector:
         karpenter.sh/provisioner-name: default
+        #alpha.eksctl.io/nodegroup-name: rapid-scale-us-west-2-ng
       serviceAccountName: appsimulator
       containers:
       - env:
-        - name: SLEEP_BETWEEN_CYCLE
+        - name: NUM_OF_LOAD_THREADS
           value: "10"
+        - name: SLEEP_BETWEEN_CYCLE
+          value: "4"
         - name: APP_URL
           value: "http://django-app-1165248039.us-west-2.elb.amazonaws.com/logistics"
         - name: DEPLOY_NAME
           value: "appsimulator"
-        image: 274739860030.dkr.ecr.us-west-2.amazonaws.com/loader:py39arm64
+        image: 274739860030.dkr.ecr.us-west-2.amazonaws.com/loader:multiarch-py3
+        imagePullPolicy: Always
         name: apploader
         command: ["/app-loader.sh"]
         resources:
           requests:
-            cpu: 128m
-            memory: 128Mi
+            cpu: 1024m
+            memory: 512Mi
+          limits:
+            cpu: 4096m
+            memory: 512Mi

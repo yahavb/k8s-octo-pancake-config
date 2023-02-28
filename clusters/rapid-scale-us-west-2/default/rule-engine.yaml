@@ -1,0 +1,53 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: ruleengine
+  name: ruleengine
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: ruleengine
+  template:
+    metadata:
+      labels:
+        app: ruleengine
+    spec:
+      nodeSelector:
+        karpenter.sh/provisioner-name: default
+      serviceAccountName: appsimulator
+      volumes:
+      - name: secrets-store-orders
+        csi:
+          driver: secrets-store.csi.k8s.io
+          readOnly: true
+          volumeAttributes:
+            secretProviderClass: rapidscale
+      containers:
+      - name: ruleengine
+        image: 274739860030.dkr.ecr.us-west-2.amazonaws.com/loader:multiarch-py3
+        imagePullPolicy: Always
+        env:
+        - name: SECRET_FILE
+          value: "/mnt/secrets/rapidscaleSecretFD8D90A13fd-erW3rRZJDUbZ"
+        - name: ORDER_QUEUE
+          value: "https://sqs.us-west-2.amazonaws.com/274739860030/orders"
+        - name: DELIVERY_QUEUE
+          value: "https://sqs.us-west-2.amazonaws.com/274739860030/delivery"
+        - name: SLEEP_BETWEEN_CYCLE
+          value: "1"
+        - name: NUM_OF_LOAD_THREADS
+          value: "25"
+        volumeMounts:
+        - name: secrets-store-orders
+          mountPath: "/mnt/secrets"
+        command: ["/rule-engine.sh"]
+        resources:
+          requests:
+            cpu: 500m
+            memory: 768Mi
+          limits:
+            cpu: 500m
+            memory: 1024Mi

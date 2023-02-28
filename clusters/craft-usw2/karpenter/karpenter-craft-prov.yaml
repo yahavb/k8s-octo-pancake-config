@@ -12,7 +12,7 @@ spec:
       values: ["spot","on-demand"]
     - key: kubernetes.io/arch
       operator: In
-      values: ["arm64"]
+      values: ["arm64","amd64"]
   limits:
     resources:
       cpu: 10000
