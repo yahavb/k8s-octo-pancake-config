@@ -11,7 +11,7 @@ spec:
         game: stkagones
     spec:
       players:
-        inititalCapacity: 40
+        inititalCapacity: 44
       ports:
       - name: default
         portPolicy: Dynamic
@@ -31,6 +31,13 @@ spec:
           nodeSelector:
             karpenter.sh/provisioner-name: stkperf
           serviceAccountName: gs-admin
+          initContainers:
+          - name: init-ddos-protection
+            image: 441218111557.dkr.ecr.us-west-2.amazonaws.com/baseimage-ci:multiarch-py3
+            command: ['sh','-c','iptables --new-chain RATE-LIMIT && iptables --append RATE-LIMIT --match hashlimit --hashlimit-mode srcip --hashlimit-upto 500/sec --hashlimit-burst 500 --hashlimit-name conn_rate_limit --jump ACCEPT && iptables --append RATE-LIMIT --jump DROP'] 
+            securityContext:
+              capabilities:
+                add: ["NET_ADMIN"]
           containers:
           - name: stk
             envFrom:
@@ -43,10 +50,12 @@ spec:
               value: "4080"
             - name: MODE
               value: "0"
+            - name: LAPS
+              value: "10"
             - name: MISC_ARGS
               value: "--owner-less --auto-connect --log=0 --connection-debug"
             - name: MAX_PLAYERS
-              value: "24"
+              value: "44"
             - name: APP
               value: stksrv
             - name: UDP_SOCKET_IP
@@ -61,7 +70,10 @@ spec:
             imagePullPolicy: Always
             command: ["/start-server.sh"]
             securityContext:
-              allowPrivilegeEscalation: true
+              #privileged: true
+              #allowPrivilegeEscalation: true
+              capabilities:
+                add: ["NET_ADMIN"]
               runAsUser: 0 
             lifecycle:
               preStop:

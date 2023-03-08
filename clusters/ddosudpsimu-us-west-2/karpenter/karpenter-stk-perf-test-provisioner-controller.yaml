@@ -20,16 +20,10 @@ spec:
       karpenter.sh/discovery: ddosudpsimu-us-west-2
     subnetSelector:
       karpenter.sh/discovery: ddosudpsimu-us-west-2
+    userData: |
+      iptables --append RATE-LIMIT --match limit --limit 400/sec --limit-burst 100 --jump ACCEPT
+      EOF
   requirements:
-#  - key: node.kubernetes.io/instance-type
-#    operator: In
-#    values:
-#    - c6g.xlarge
-#    - c6g.2xlarge
-#    - c6g.4xlarge
-#    - c6g.8xlarge
-#    - c6g.12xlarge
-#    - c6g.16xlarge
   - key: karpenter.k8s.aws/instance-cpu
     operator: Lt
     values:

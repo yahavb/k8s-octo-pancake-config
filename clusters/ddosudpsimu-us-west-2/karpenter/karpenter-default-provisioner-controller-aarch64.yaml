@@ -21,15 +21,6 @@ spec:
     subnetSelector:
       karpenter.sh/discovery: ddosudpsimu-us-west-2
   requirements:
-#  - key: node.kubernetes.io/instance-type
-#    operator: In
-#    values:
-#    - c6g.xlarge
-#    - c6g.2xlarge
-#    - c6g.4xlarge
-#    - c6g.8xlarge
-#    - c6g.12xlarge
-#    - c6g.16xlarge
   - key: kubernetes.io/arch
     operator: In
     values:
@@ -39,4 +30,8 @@ spec:
     values:
     - spot
     - on-demand
+  - key: karpenter.k8s.aws/instance-cpu
+    operator: Lt
+    values:
+    - "4"
   ttlSecondsAfterEmpty: 30
