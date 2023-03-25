@@ -1,0 +1,48 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: amdsimplemultiarchproc
+  namespace: default
+spec:
+  selector:
+    matchLabels:
+      app: simplemultiarchproc
+  template:
+    metadata:
+      labels:
+        app: simplemultiarchproc
+    spec:
+      nodeSelector:
+        karpenter.sh/provisioner-name: tlvsummit23amd
+      serviceAccountName: appsimulator
+      containers:
+      - name: app
+        env:
+        - name: NUM_OF_LOAD_THREADS
+          value: "40"
+        - name: SLEEP_BETWEEN_CYCLE
+          value: "1"
+        - name: APP_QUEUE
+          value: "https://sqs.us-west-2.amazonaws.com/498254202105/amdsimpleapp"
+        - name: MATRIX_DIM
+          value: "500"
+        - name: NUM_CORE
+          value: "20"
+        - name: POD_IP
+          valueFrom:
+            fieldRef:
+              fieldPath: status.podIP
+        - name: POD_NAME
+          valueFrom:
+            fieldRef:
+              fieldPath: metadata.name
+        image: 498254202105.dkr.ecr.us-west-2.amazonaws.com/simplemultiarchimage:multiarch-py3
+        imagePullPolicy: Always
+        command: ["/usr/src/app/async-proc.sh"]
+        resources:
+          requests:
+            cpu: 3000m
+            #memory: 512Mi        
+          limits:
+            cpu: 3000m
+            #memory: 512Mi        

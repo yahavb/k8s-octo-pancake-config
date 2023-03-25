@@ -26,7 +26,7 @@ spec:
         - name: SLEEP_BETWEEN_CYCLE
           value: "4"
         - name: APP_URL
-          value: "http://django-app-1165248039.us-west-2.elb.amazonaws.com/logistics"
+          value: "http://django-app-840600863.us-west-2.elb.amazonaws.com/logistics"
         - name: DEPLOY_NAME
           value: "appsimulator"
         image: 274739860030.dkr.ecr.us-west-2.amazonaws.com/loader:multiarch-py3
