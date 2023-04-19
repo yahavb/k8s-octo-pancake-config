@@ -1,0 +1,49 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: lyra
+  namespace: default
+spec:
+  selector:
+    matchLabels:
+      app: lyra
+  template:
+    metadata:
+      labels:
+        app: lyra
+    spec:
+      nodeSelector:
+        karpenter.sh/provisioner-name: lyra
+      serviceAccountName: appsimulator
+      securityContext:
+        #runAsUser: 1000
+        runAsUser: 0
+      containers:
+      - name: app
+        securityContext:
+          allowPrivilegeEscalation: true
+          capabilities:
+            add: ["NET_ADMIN"]
+        env:
+        - name: POD_IP
+          valueFrom:
+            fieldRef:
+              fieldPath: status.podIP
+        - name: POD_NAME
+          valueFrom:
+            fieldRef:
+              fieldPath: metadata.name
+        image: 907513986313.dkr.ecr.us-west-2.amazonaws.com/lyra:lyra_starter_game
+        imagePullPolicy: Always
+        command: ["/usr/local/lyra_starter_game/LyraServer.sh"]
+        resources:
+          requests:
+            cpu: 1000m
+            #memory: 7168Mi        
+          limits:
+            cpu: 4000m
+            #memory: 7168Mi        
+        ports:
+          - containerPort: 7777 
+            hostPort: 7777
+            protocol: UDP

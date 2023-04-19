@@ -1,7 +1,7 @@
 apiVersion: "agones.dev/v1"
 kind: Fleet
 metadata:
-  name: stknoratelimit
+  name: stkamd
 spec:
   replicas: 1
   scheduling: Packed
@@ -29,12 +29,19 @@ spec:
             game: stk
         spec:
           nodeSelector:
-            karpenter.sh/provisioner-name: stksrv
+            karpenter.sh/provisioner-name: stksrvamd
           serviceAccountName: gs-admin
           initContainers:
           - name: rate-limit
-            image: 441218111557.dkr.ecr.us-west-2.amazonaws.com/baseimage-ci:multiarch-py3
-            command: ['sh','-c','echo iptables']
+            image: 441218111557.dkr.ecr.us-west-2.amazonaws.com/stk-ci:stk-server-multiarch
+            env:
+            - name: HASHLIMIT_UPTO
+              value: "1000"
+            - name: HASHLIMIT_BURST
+              value: "3000"
+            - name: LOG_LIMIT
+              value: "30"
+            command: ["/rate-limit.sh"]
             securityContext:
               capabilities:
                 add: ["NET_ADMIN"]
@@ -46,8 +53,12 @@ spec:
             env:
             - name: IS_AGONES
               value: "True"
+            - name: CPUARCH
+              value: "amd64"
             - name: GAME_SERVER_PORT
               value: "4080"
+            - name: CW_NS
+              value: "supertuxkart"
             - name: MODE
               value: "0"
             - name: LAPS
@@ -56,8 +67,12 @@ spec:
               value: "--owner-less --auto-connect --log=0 --connection-debug"
             - name: MAX_PLAYERS
               value: "50"
-           - name: CW_NS
-              value: "supertuxkart"
+            - name: MATRIX_DIM
+              value: "500"
+            - name: NUM_MULTPLY
+              value: "100"
+            - name: MONITOR_SESSION_FREQ
+              value: "10"
             - name: APP
               value: stksrv
             - name: UDP_SOCKET_IP
@@ -82,16 +97,16 @@ spec:
                 exec:
                   command: ["/bin/sh","-c","/srv-sigstop.sh > /proc/1/fd/1 && sleep 20"]
                   #command: ["/bin/sh","-c","/srv-sigstop.sh && sleep 20"]
-            livenessProbe:
-              exec:
-                command:
-                - /udp-health-probe.py
-              initialDelaySeconds: 60
-              periodSeconds: 5 
-            resources:
-              requests:
-                cpu: 1000m
-                memory: 512Mi
-              limits:
-                cpu: 1000m
-                memory: 512Mi
+            #livenessProbe:
+            #  exec:
+            #    command:
+            #    - /udp-health-probe.py
+            #  initialDelaySeconds: 60
+            #  periodSeconds: 5 
+            #resources:
+            #  requests:
+            #    cpu: 1000m
+              #  memory: 512Mi
+              #limits:
+              #  cpu: 1000m
+              #  memory: 512Mi

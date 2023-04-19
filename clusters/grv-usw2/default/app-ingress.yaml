@@ -1,0 +1,27 @@
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: simplemultiarchapp-ingress
+  annotations:
+    alb.ingress.kubernetes.io/scheme: internet-facing
+    alb.ingress.kubernetes.io/target-type: ip
+    alb.ingress.kubernetes.io/healthcheck-path: /app/health/
+    alb.ingress.kubernetes.io/success-codes: '200-301'
+    alb.ingress.kubernetes.io/listen-ports: '[{"HTTP":80},{"HTTPS": 443}]'
+    alb.ingress.kubernetes.io/backend-protocol: HTTP
+    alb.ingress.kubernetes.io/load-balancer-name: simplemultiarchapp
+    alb.ingress.kubernetes.io/group.name: simplemultiarchapp
+    alb.ingress.kubernetes.io/actions.weighted-routing: '{"type":"forward","forwardConfig":{"targetGroups":[{"serviceName":"armsimplemultiarchapp-svc","servicePort":"80","weight":"50"},{"serviceName":"amdsimplemultiarchapp-svc","servicePort":"80","weight":"50"}]}}'
+    kubernetes.io/ingress.class: alb
+spec:
+  rules:
+    - http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: weighted-routing
+                port:
+                  number: 80

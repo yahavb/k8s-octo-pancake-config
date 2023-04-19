@@ -4,6 +4,10 @@ metadata:
   name: tlvsummit23amd
 spec:
   requirements:
+  - key: karpenter.k8s.aws/instance-generation
+    operator: In
+    values:
+    - "6"
   - key: karpenter.k8s.aws/instance-cpu
     operator: In 
     values:

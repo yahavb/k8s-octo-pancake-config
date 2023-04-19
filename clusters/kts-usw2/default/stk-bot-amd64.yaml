@@ -3,8 +3,8 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   labels:
-    app: stkbot
-  name: stkbot
+    app: stkbotamd
+  name: stkbotamd
   namespace: default
 spec:
   strategy:
@@ -15,11 +15,11 @@ spec:
   #replicas: 1
   selector:
     matchLabels:
-      app: stkbot
+      app: stkbotamd
   template:
     metadata:
       labels:
-        app: stkbot
+        app: stkbotamd
     spec:
       nodeSelector:
         karpenter.sh/provisioner-name: stkbot
@@ -47,7 +47,9 @@ spec:
         - name: MAXPLAYERS
           value: "44"
         - name: NETWORK_AI
-          value: "17"
+          value: "10"
+        - name: CPUARCH
+          value: "amd64"
         - name: SLEEP_B4_PUT_CW
           value: "10"
         - name: GAME_VERSION

@@ -3,37 +3,37 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   labels:
-    app: apploader
-  name: apploader
+    app: lyraattacker
+  name: lyraattacker
 spec:
 #  replicas: 1
   selector:
     matchLabels:
-      app: apploader
+      app: lyraattacker
   template:
     metadata:
       labels:
-        app: apploader
+        app: lyraattacker
     spec:
       nodeSelector:
         karpenter.sh/provisioner-name: apploader
       serviceAccountName: appsimulator
       containers:
       - env:
+        - name: PORT
+          value: "7777"
+        - name: HOST
+          value: "44.228.131.0"
         - name: NUM_OF_LOAD_THREADS
-          value: "10"
+          value: "100"
         - name: SLEEP_BETWEEN_CYCLE
           value: "10"
-        - name: ARM_APP_URL
-          value: "http://simplemultiarchapp-279437019.us-west-2.elb.amazonaws.com/app"
-        - name: AMD_APP_URL
-          value: "http://simplemultiarchapp-279437019.us-west-2.elb.amazonaws.com/app"
         - name: DEPLOY_NAME
           value: "appsimulator"
-        image: 907513986313.dkr.ecr.us-west-2.amazonaws.com/simplemultiarchimage:multiarch-py3
+        image: 907513986313.dkr.ecr.us-west-2.amazonaws.com/lyra:lyra_attacker
         imagePullPolicy: Always
-        name: apploader
-        command: ["/usr/src/app/app-loader.sh"]
+        name: lyraattacker
+        command: ["/simulate_session.py"]
         #resources:
         #  requests:
         #    cpu: 1000m

@@ -33,6 +33,6 @@ metadata:
   name: default
 spec:
   subnetSelector:
-    karpenter.sh/discovery: grv-usw2
+    karpenter.sh/discovery: grv-use1
   securityGroupSelector:
-    karpenter.sh/discovery: grv-usw2
+    karpenter.sh/discovery: grv-use1

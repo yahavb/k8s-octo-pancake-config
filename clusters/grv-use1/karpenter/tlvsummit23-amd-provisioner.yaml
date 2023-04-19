@@ -1,15 +1,15 @@
 apiVersion: karpenter.sh/v1alpha5
 kind: Provisioner
 metadata:
-  name: tlvsummit23arm
+  name: tlvsummit23amd
 spec:
   requirements:
   - key: karpenter.k8s.aws/instance-generation
     operator: In
     values:
-    - "7"
+    - "6"
   - key: karpenter.k8s.aws/instance-cpu
-    operator: In
+    operator: In 
     values:
     - "2"
   - key: karpenter.sh/capacity-type
@@ -19,7 +19,7 @@ spec:
   - key: kubernetes.io/arch
     operator: In
     values:
-    - arm64
+    - amd64
   limits:
     resources:
       cpu: 1000
@@ -33,6 +33,6 @@ metadata:
   name: default
 spec:
   subnetSelector:
-    karpenter.sh/discovery: grv-usw2
+    karpenter.sh/discovery: grv-use1
   securityGroupSelector:
-    karpenter.sh/discovery: grv-usw2
+    karpenter.sh/discovery: grv-use1

@@ -1,7 +1,7 @@
 apiVersion: karpenter.sh/v1alpha5
 kind: Provisioner
 metadata:
-  name: stksrv
+  name: stksrvamd
 spec:
   requirements:
   - key: karpenter.k8s.aws/instance-cpu
@@ -11,7 +11,6 @@ spec:
   - key: kubernetes.io/arch
     operator: In
     values:
-    - arm64
     - amd64
   - key: karpenter.k8s.aws/instance-generation
     operator: In

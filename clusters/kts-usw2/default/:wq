@@ -1,7 +1,7 @@
 apiVersion: "agones.dev/v1"
 kind: Fleet
 metadata:
-  name: stknoratelimit
+  name: stkarm
 spec:
   replicas: 1
   scheduling: Packed
@@ -29,12 +29,19 @@ spec:
             game: stk
         spec:
           nodeSelector:
-            karpenter.sh/provisioner-name: stksrv
+            karpenter.sh/provisioner-name: stksrvarm
           serviceAccountName: gs-admin
           initContainers:
           - name: rate-limit
-            image: 441218111557.dkr.ecr.us-west-2.amazonaws.com/baseimage-ci:multiarch-py3
-            command: ['sh','-c','echo iptables']
+            image: 441218111557.dkr.ecr.us-west-2.amazonaws.com/stk-ci:stk-server-multiarch
+            env:
+            - name: HASHLIMIT_UPTO
+              value: "1000"
+            - name: HASHLIMIT_BURST
+              value: "3000"
+            - name: LOG_LIMIT
+              value: "30"
+            command: ["/rate-limit.sh"]
             securityContext:
               capabilities:
                 add: ["NET_ADMIN"]
@@ -46,8 +53,12 @@ spec:
             env:
             - name: IS_AGONES
               value: "True"
+            - name: CPUARCH
+              value: "aarch64"
             - name: GAME_SERVER_PORT
               value: "4080"
+            - name: CW_NS
+              value: "supertuxkart"
             - name: MODE
               value: "0"
             - name: LAPS
@@ -56,8 +67,8 @@ spec:
               value: "--owner-less --auto-connect --log=0 --connection-debug"
             - name: MAX_PLAYERS
               value: "50"
-           - name: CW_NS
-              value: "supertuxkart"
+            - name: MATRIX_DIM
+              value: "50"
             - name: APP
               value: stksrv
             - name: UDP_SOCKET_IP
@@ -88,10 +99,10 @@ spec:
                 - /udp-health-probe.py
               initialDelaySeconds: 60
               periodSeconds: 5 
-            resources:
-              requests:
-                cpu: 1000m
-                memory: 512Mi
-              limits:
-                cpu: 1000m
-                memory: 512Mi
+            #resources:
+            #  requests:
+            #    cpu: 1000m
+              #  memory: 512Mi
+              #limits:
+              #  cpu: 1000m
+              #  memory: 512Mi
