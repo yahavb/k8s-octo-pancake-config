@@ -49,7 +49,7 @@ spec:
           valueFrom:
             fieldRef:
               fieldPath: metadata.name
-        image: 441218111557.dkr.ecr.us-west-2.amazonaws.com/stk-ci:stk-server-multiarch
+        image: public.ecr.aws/n5f4v4l0/stk
         lifecycle:
           preStop:
             exec:
