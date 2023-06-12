@@ -1,25 +1,25 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: lyra
+  name: lyrarm64
   namespace: default
 spec:
   selector:
     matchLabels:
-      app: lyra
+      app: lyrarm64
   template:
     metadata:
       labels:
-        app: lyra
+        app: lyrarm64
     spec:
       nodeSelector:
-        karpenter.sh/provisioner-name: lyra
+        karpenter.sh/provisioner-name: lyrarm64
       serviceAccountName: appsimulator
       securityContext:
         #runAsUser: 1000
         runAsUser: 0
       containers:
-      - name: app
+      - name: lyra
         securityContext:
           allowPrivilegeEscalation: true
           capabilities:
@@ -35,15 +35,22 @@ spec:
               fieldPath: metadata.name
         image: 907513986313.dkr.ecr.us-west-2.amazonaws.com/lyra:lyra_starter_game
         imagePullPolicy: Always
-        command: ["/usr/local/lyra_starter_game/LyraServer.sh"]
+        #command: ["/usr/local/lyra_starter_game/LyraServer.sh"]
+        command: ["/bin/sh","-c"]
+        args: ["/usr/local/lyra_starter_game/LyraServer.sh"] 
+        lifecycle:
+          postStart:
+            exec:
+              command: ["/usr/local/lyra_starter_game/create_node_port_svc.sh"]
+          preStop:
+            exec:
+              command: ["/bin/sh","-c","kubectl delete svc `kubectl get svc|grep $POD_NAME | awk '{print $1}'`"]
         resources:
           requests:
             cpu: 1000m
-            #memory: 7168Mi        
           limits:
             cpu: 4000m
-            #memory: 7168Mi        
         ports:
           - containerPort: 7777 
-            hostPort: 7777
             protocol: UDP
+            hostPort: 7777

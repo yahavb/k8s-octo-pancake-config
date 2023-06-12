@@ -25,9 +25,9 @@ spec:
           privileged: true 
           allowPrivilegeEscalation: true
           runAsUser: 0
-        envFrom:
-          - secretRef:
-              name: db-creds
+#        envFrom:
+#          - secretRef:
+#              name: db-creds
         env:
         - name: MISC_ARGS
           value: "--connection-debug --auto-connect --owner-less"

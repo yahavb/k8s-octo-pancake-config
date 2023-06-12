@@ -33,7 +33,6 @@ spec:
           serviceAccountName: gs-admin
           initContainers:
           - name: rate-limit
-            #image: 441218111557.dkr.ecr.us-west-2.amazonaws.com/baseimage-ci:multiarch-py3
             image: 441218111557.dkr.ecr.us-west-2.amazonaws.com/stk-ci:stk-server-multiarch
             env:
             - name: HASHLIMIT_UPTO

@@ -1,9 +1,14 @@
 apiVersion: karpenter.sh/v1alpha5
 kind: Provisioner
 metadata:
-  name: lyra
+  name: tlvsummit23arm
 spec:
+  weight: 50
   requirements:
+  - key: karpenter.k8s.aws/instance-generation
+    operator: In
+    values:
+    - "7"
   - key: karpenter.k8s.aws/instance-cpu
     operator: In
     values:
@@ -16,10 +21,9 @@ spec:
     operator: In
     values:
     - arm64
-    - amd64
   limits:
     resources:
-      cpu: 1000
+      cpu: 100
   providerRef:
     name: default
   ttlSecondsAfterEmpty: 30
@@ -30,6 +34,6 @@ metadata:
   name: default
 spec:
   subnetSelector:
-    karpenter.sh/subnet/discovery: grv-usw2-public
+    karpenter.sh/discovery: lyra-usw2
   securityGroupSelector:
-    karpenter.sh/discovery: grv-usw2
+    karpenter.sh/discovery: lyra-usw2

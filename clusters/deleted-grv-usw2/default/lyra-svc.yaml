@@ -1,0 +1,12 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: lyra-svc
+spec:
+  selector:
+    gamepod: lyra-586c78d96-b2dwg
+  ports:
+    - protocol: UDP
+      port: 7777 
+      targetPort:  7777
+  type: NodePort

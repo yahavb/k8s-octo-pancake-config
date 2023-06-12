@@ -1,0 +1,75 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: amdsimplemultiarchapp
+  namespace: default
+spec:
+  selector:
+    matchLabels:
+      app: amdsimplemultiarchapp
+  strategy:
+    rollingUpdate:
+      maxSurge: 25%
+      maxUnavailable: 25%
+    type: RollingUpdate
+  template:
+    metadata:
+      creationTimestamp: null
+      labels:
+        app: amdsimplemultiarchapp
+    spec:
+      containers:
+      - command:
+        - /usr/src/app/start.sh
+        env:
+        - name: CW_NS
+          value: appsimulator
+        - name: MATRIX_DIM
+          value: "500"
+        - name: POD_IP
+          valueFrom:
+            fieldRef:
+              apiVersion: v1
+              fieldPath: status.podIP
+        - name: POD_NAME
+          valueFrom:
+            fieldRef:
+              apiVersion: v1
+              fieldPath: metadata.name
+        image: 907513986313.dkr.ecr.us-west-2.amazonaws.com/simplemultiarchimage:multiarch-py3
+        imagePullPolicy: Always
+        livenessProbe:
+          failureThreshold: 3
+          httpGet:
+            path: /app/health/
+            port: 8000
+            scheme: HTTP
+          initialDelaySeconds: 3
+          periodSeconds: 3
+          successThreshold: 1
+          timeoutSeconds: 1
+        name: app
+        ports:
+        - containerPort: 8000
+          protocol: TCP
+        readinessProbe:
+          failureThreshold: 3
+          httpGet:
+            path: /app/health/
+            port: 8000
+            scheme: HTTP
+          initialDelaySeconds: 3
+          periodSeconds: 3
+          successThreshold: 1
+          timeoutSeconds: 1
+        resources:
+          limits:
+            cpu: "4"
+          requests:
+            cpu: "1"
+      #nodeSelector:
+      #  karpenter.sh/provisioner-name: tlvsummit23amd
+      restartPolicy: Always
+      serviceAccount: appsimulator
+      serviceAccountName: appsimulator
+      terminationGracePeriodSeconds: 30

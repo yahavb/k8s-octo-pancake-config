@@ -1,0 +1,43 @@
+---
+apiVersion: eksctl.io/v1alpha5
+kind: ClusterConfig
+metadata:
+  name: ip4-usw2
+  region: us-west-2
+  version: "1.24"
+  tags:
+    karpenter.sh/discovery: ip4-usw2
+
+kubernetesNetworkConfig:
+  ipFamily: IPv4 
+
+addons:
+  - name: vpc-cni
+  - name: coredns
+  - name: kube-proxy
+
+iam:
+  withOIDC: true
+  serviceAccounts:
+  - metadata:
+      name: karpenter
+      namespace: karpenter
+    roleName: ip4-usw2-karpenter
+    attachPolicyARNs:
+    - arn:aws:iam::441218111557:policy/KarpenterControllerPolicy-ip4-usw2
+    roleOnly: true
+
+iamIdentityMappings:
+- arn: "arn:aws:iam::441218111557:role/KarpenterNodeRole-ip4-usw2"
+  username: system:node:{{EC2PrivateDNSName}}
+  groups:
+  - system:bootstrappers
+  - system:nodes
+
+managedNodeGroups:
+- instanceType: m5.large
+  amiFamily: AmazonLinux2
+  name: ip4-usw2-ng
+  desiredCapacity: 2
+  minSize: 1
+  maxSize: 10
