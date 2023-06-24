@@ -45,11 +45,11 @@ spec:
           preStop:
             exec:
               command: ["/bin/sh","-c","kubectl delete svc `kubectl get svc|grep $POD_NAME | awk '{print $1}'`"]
-        resources:
-          requests:
-            cpu: 1000m
-          limits:
-            cpu: 4000m
+        #resources:
+        #  requests:
+        #    cpu: 1000m
+        #  limits:
+        #    cpu: 4000m
         ports:
           - containerPort: 7777 
             protocol: UDP

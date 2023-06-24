@@ -25,13 +25,13 @@ spec:
     resources:
       cpu: 100
   providerRef:
-    name: default
+    name: tlvsummit23arm
   ttlSecondsAfterEmpty: 30
 ---
 apiVersion: karpenter.k8s.aws/v1alpha1
 kind: AWSNodeTemplate
 metadata:
-  name: default
+  name: tlvsummit23arm
 spec:
   subnetSelector:
     karpenter.sh/discovery: lyra-usw2
