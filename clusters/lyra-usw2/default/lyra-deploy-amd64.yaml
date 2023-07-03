@@ -19,6 +19,18 @@ spec:
         runAsUser: 1000
         #runAsUser: 0
       containers:
+#      - name: nginx
+#        securityContext:
+#          allowPrivilegeEscalation: true
+#          capabilities:
+#            add: ["NET_ADMIN"]
+#        image: 907513986313.dkr.ecr.us-west-2.amazonaws.com/lyra:nginx
+#        imagePullPolicy: Always
+#        command: ["nginx","-g","daemon off;"]
+#        ports:
+#          - containerPort: 80
+#            protocol: TCP
+#            hostPort: 80
       - name: lyra
         securityContext:
           allowPrivilegeEscalation: true

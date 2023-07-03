@@ -16,9 +16,21 @@ spec:
         karpenter.sh/provisioner-name: lyrarm64
       serviceAccountName: appsimulator
       securityContext:
-        #runAsUser: 1000
-        runAsUser: 0
+        runAsUser: 1000
+        #runAsUser: 0
       containers:
+#      - name: nginx
+#        securityContext:
+#          allowPrivilegeEscalation: true
+#          capabilities:
+#            add: ["NET_ADMIN","CAP_SYS_ADMIN"]
+#        image: 907513986313.dkr.ecr.us-west-2.amazonaws.com/lyra:nginx
+#        imagePullPolicy: Always
+#        command: ["nginx","-p","8077","-g","daemon off;"]
+#        ports:
+#          - containerPort: 8077
+#            protocol: TCP
+#            hostPort: 8077
       - name: lyra
         securityContext:
           allowPrivilegeEscalation: true
