@@ -68,7 +68,7 @@ spec:
             port: 8000
           initialDelaySeconds: 3
           periodSeconds: 3
-        image: 953892292675.dkr.ecr.us-west-2.amazonaws.com/authapp:py39arm64
+        image: 953892292675.dkr.ecr.us-west-2.amazonaws.com/authapp:py39multiarch64
         imagePullPolicy: Always
         command: ["/usr/src/app/start.sh"]
         resources:
