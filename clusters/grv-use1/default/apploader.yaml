@@ -1,0 +1,46 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: apploader
+  name: apploader
+  namespace: default
+spec:
+  progressDeadlineSeconds: 600
+  replicas: 2
+  revisionHistoryLimit: 10
+  selector:
+    matchLabels:
+      app: apploader
+  strategy:
+    rollingUpdate:
+      maxSurge: 25%
+      maxUnavailable: 25%
+    type: RollingUpdate
+  template:
+    metadata:
+      labels:
+        app: apploader
+    spec:
+      containers:
+      - command:
+        - /usr/src/app/app-loader.sh
+        env:
+        - name: NUM_OF_LOAD_THREADS
+          value: "20"
+        - name: SLEEP_BETWEEN_CYCLE
+          value: "10"
+        - name: ARM_APP_URL
+          value: http://simplemultiarchapp-627712776.us-east-1.elb.amazonaws.com/app
+        - name: AMD_APP_URL
+          value: http://simplemultiarchapp-627712776.us-west-2.elb.amazonaws.com/app
+        - name: APP_URL
+          value: http://simplemultiarchapp-627712776.us-west-2.elb.amazonaws.com/app
+        - name: DEPLOY_NAME
+          value: "appsimulator-use1"
+        image: 907513986313.dkr.ecr.us-west-2.amazonaws.com/simplemultiarchimage:multiarch-py3
+        imagePullPolicy: Always
+        name: apploader
+      serviceAccount: appsimulator
+      serviceAccountName: appsimulator
+      terminationGracePeriodSeconds: 30

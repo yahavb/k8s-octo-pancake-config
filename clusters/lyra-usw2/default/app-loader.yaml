@@ -28,12 +28,14 @@ spec:
           value: "http://simplemultiarchapp-292419503.us-west-2.elb.amazonaws.com/app"
         - name: AMD_APP_URL
           value: "http://simplemultiarchapp-292419503.us-west-2.elb.amazonaws.com/app"
+        - name: APP_URL
+          value: "http://simplemultiarchapp-292419503.us-west-2.elb.amazonaws.com/app"
         - name: DEPLOY_NAME
-          value: "appsimulator"
+          value: "appsimulator-usw2"
         image: 907513986313.dkr.ecr.us-west-2.amazonaws.com/simplemultiarchimage:multiarch-py3
         imagePullPolicy: Always
         name: apploader
-        command: ["/usr/src/app/app-loader.sh"]
+        command: ["/usr/src/app/multiarch-app-loader.sh"]
         ##resources:
         #  requests:
         #    cpu: 1000m

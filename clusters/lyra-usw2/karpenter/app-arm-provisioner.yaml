@@ -3,7 +3,7 @@ kind: Provisioner
 metadata:
   name: tlvsummit23arm
 spec:
-  weight: 50
+  weight: 100
   requirements:
   - key: karpenter.k8s.aws/instance-generation
     operator: In
@@ -23,7 +23,8 @@ spec:
     - arm64
   limits:
     resources:
-      cpu: 100
+      cpu: 90
+      #cpu: 100
   providerRef:
     name: tlvsummit23arm
   ttlSecondsAfterEmpty: 30

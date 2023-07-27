@@ -27,7 +27,8 @@ spec:
         - name: RADIAN_MAX
           value: "3.14"
         - name: CLIENT_SCALE_RATIO
-          value: "10"
+          value: "12"
+          #value: "10" not enough compute for karpenter prov failover
         - name: MIN_AT_CYCLE_START
           value: "1"
         - name: CLIENT_DEPLOY_PREFIX

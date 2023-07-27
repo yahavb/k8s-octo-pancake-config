@@ -90,7 +90,7 @@ spec:
               value: "http://craft.auth.yahav.sa.aws.dev/auth/identity/"
             - name: SECRET_FILE
               value: "/mnt/secrets/craftcraftusw2SecretAA604F6-CbrgEOMoOlpW"
-        image: 953892292675.dkr.ecr.us-west-2.amazonaws.com/craftci:arm64py3
+        image: 953892292675.dkr.ecr.us-west-2.amazonaws.com/craft-ci:craft-multiarch
         imagePullPolicy: Always
         command: ["/start.sh"]
         readinessProbe:
@@ -104,11 +104,19 @@ spec:
             initialDelaySeconds: 5
             periodSeconds: 10
         lifecycle:
+            postStart:
+              exec:
+                command: ["/bin/sh", "-c", "/create_node_port_svc.sh"]
             preStop:
               exec:
                 # Allow existing clients to complete within 120 seconds
-                command: ["/bin/sh", "-c", "kill $(ps aux | grep server.py| grep -v grep| awk '{print $2}') && sleep 120"]
+                # command: ["/bin/sh", "-c", "kill $(ps aux | grep server.py| grep -v grep| awk '{print $2}') && sleep 120"]
+                command: ["/bin/sh","-c","kubectl delete svc `kubectl get svc|grep $MY_POD_NAME | awk '{print $1}'`"]
         resources:
             requests:
               cpu: 1024m
               memory: 1024Mi
+        ports:
+          - containerPort: 4080
+            protocol: TCP
+            hostPort: 4080

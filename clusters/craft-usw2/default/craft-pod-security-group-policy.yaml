@@ -1,0 +1,12 @@
+apiVersion: vpcresources.k8s.aws/v1beta1
+kind: SecurityGroupPolicy
+metadata:
+  name: craft-security-group-policy
+  namespace: default
+spec:
+  serviceAccountSelector: 
+    matchLabels:
+      name: adaptivecraft
+  securityGroups:
+    groupIds:
+      - sg-0f164da3e4d76e91e
