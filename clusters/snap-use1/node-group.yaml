@@ -1,0 +1,21 @@
+---
+apiVersion: eksctl.io/v1alpha5
+kind: ClusterConfig
+metadata:
+  name: snap-use1
+  region: us-east-1
+  version: "1.27"
+  tags:
+    cluster-autoscaler/discovery: snap-use1
+
+managedNodeGroups:
+- amiFamily: AmazonLinux2
+  instanceTypes: 
+  - c6g.8xlarge
+  - c7g.8xlarge
+  name: snap-use1-cas-ng
+  desiredCapacity: 0
+  minSize: 0
+  maxSize: 10
+  availabilityZones: ['us-east-1a','us-east-1b','us-east-1c','us-east-1d','us-east-1f']
+

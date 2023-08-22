@@ -1,0 +1,109 @@
+apiVersion: karpenter.sh/v1alpha5
+kind: Provisioner
+metadata:
+  name: trainium
+spec:
+  requirements:
+    - key: karpenter.k8s.aws/instance-family
+      operator: In
+      values: ["trn1","trn1n"] 
+    - key: kubernetes.io/arch
+      operator: In
+      values: ["amd64"]
+  limits:
+  providerRef:
+    name: trainium
+  labels:
+    type: karpenter
+    provisioner: trainium
+  ttlSecondsAfterEmpty: 30 
+---
+apiVersion: karpenter.k8s.aws/v1alpha1
+kind: AWSNodeTemplate
+metadata:
+  name: trainium
+spec:
+  amiSelector: 
+   aws::ids: "ami-0e1ab3aca99870c44"
+  tags:
+    InstanceType: "trainium"  
+  subnetSelector:
+    karpenter.sh/discovery: ai-use1
+  securityGroupSelector:
+    karpenter.sh/discovery: ai-use1
+  #blockDeviceMappings:
+  #  - deviceName: /dev/xvda
+  #    ebs:
+  #      volumeSize: 100Gi
+  #      volumeType: gp3
+  #      encrypted: true
+  #      deleteOnTermination: true
+  tags:
+    InstanceType: "trainium"   # optional, add tags for your own use
+  userData: |
+    echo "Running a custom user data script"
+    # Configure NVMe volumes in RAID0 configuration
+    # https://github.com/awslabs/amazon-eks-ami/blob/056e31f8c7477e893424abce468cb32bbcd1f079/files/bootstrap.sh#L35C121-L35C126
+    # Mount will be: /mnt/k8s-disks
+    #export LOCAL_DISKS='raid0'
+    NVME_BLK=`lsblk| grep disk|grep nvme | awk '{print $1}'`
+    for blk in ${NVME_BLK}; do mkfs -t xfs /dev/$blk; mkdir /mnt/$blk; mount /dev/$blk /mnt/$blk; done
+
+    # Install Neuron monitoring tools
+    yum install aws-neuronx-tools-2.* -y
+    export PATH=/opt/aws/neuron/bin:$PATH
+
+    # Create 8 network interfaces similar to Terraform configuration
+    TOKEN=`curl -s -X PUT "http://169.254.169.254/latest/api/token" -H "X-aws-ec2-metadata-token-ttl-seconds: 21600"`
+    INSTANCE_ID=`curl -s -H "X-aws-ec2-metadata-token: $TOKEN" http://169.254.169.254/latest/meta-data/instance-id`
+    echo INSTANCE_ID=${INSTANCE_ID}
+
+    # Create network interface with device_index = 0
+    INSTANCE_MACS=`curl -s -H "X-aws-ec2-metadata-token: $TOKEN" http://169.254.169.254/latest/meta-data/network/interfaces/macs | xargs | awk '{print $1}'`
+    echo INSTANCE_MACS=${INSTANCE_MACS}
+    SUBNET_ID=`curl -s -H "X-aws-ec2-metadata-token: $TOKEN" http://169.254.169.254/latest/meta-data/network/interfaces/macs/${INSTANCE_MACS}/subnet-id`
+    echo SUBNET_ID=${SUBNET_ID}
+    #commenting it for now as device-index 0 is already attached. Example error below:
+    # An error occurred (InvalidParameterValue) when calling the AttachNetworkInterface operation: Instance 'i-036776b0df0660fc7' already has an interface attached at device index '0 and network card index 0'.
+    #INTERFACE_ID=$(aws ec2 create-network-interface \
+    #  --description "NetworkInterfaces Configuration For EFA and EKS" \
+    #  --subnet-id $SUBNET_ID \
+    #  --query 'NetworkInterface.NetworkInterfaceId' \
+    #  --output text
+    #)
+    #echo INTERFACE_ID=${INTERFACE_ID}
+    #aws ec2 attach-network-interface \
+    #  --network-interface-id $INTERFACE_ID \
+    #  --instance-id $INSTANCE_ID \
+    #  --device-index 0 \
+    #  --network-card-index 0
+    #echo Attached interface ${INTERFACE_ID} to device-index 0 in instance $INSTANCE_ID
+
+    for ((network_card_index=1; network_card_index<8; network_card_index++))
+    do
+      INTERFACE_ID=$(aws ec2 create-network-interface \
+        --description "NetworkInterfaces Configuration For EFA and EKS" \
+        --subnet-id $SUBNET_ID \
+        --query 'NetworkInterface.NetworkInterfaceId' \
+        --output text
+      )
+      echo INTERFACE_ID=${INTERFACE_ID}
+      aws ec2 attach-network-interface \
+        --network-interface-id $INTERFACE_ID \
+        --instance-id $INSTANCE_ID \
+        --device-index  1 \
+        --network-card-index $network_card_index
+        #add inteface type efa
+
+      echo Attached interface ${INTERFACE_ID} to device-index 1 and network-card-index $network_card_index in instance $INSTANCE_ID
+    done
+    
+    # EFA Setup for Trainium and Inferentia
+    #export FI_EFA_USE_DEVICE_RDMA=1
+    #export FI_PROVIDER=efa
+    #export FI_EFA_FORK_SAFE=1
+    
+    #curl -O https://efa-installer.amazonaws.com/aws-efa-installer-latest.tar.gz
+    #tar -xf aws-efa-installer-latest.tar.gz && cd aws-efa-installer
+    #./efa_installer.sh -y -g
+    #/opt/amazon/efa/bin/fi_info -p efa

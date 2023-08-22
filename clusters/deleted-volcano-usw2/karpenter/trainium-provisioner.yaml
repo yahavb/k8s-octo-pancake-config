@@ -1,0 +1,29 @@
+apiVersion: karpenter.sh/v1alpha5
+kind: Provisioner
+metadata:
+  name: trainium
+spec:
+  requirements:
+    - key: karpenter.k8s.aws/instance-family
+      operator: In
+      values: ["trn1","trn1n"] 
+  limits:
+  providerRef:
+    name: trainium
+  labels:
+    type: karpenter
+    provisioner: trainium
+  ttlSecondsAfterEmpty: 30 
+---
+apiVersion: karpenter.k8s.aws/v1alpha1
+kind: AWSNodeTemplate
+metadata:
+  name: trainium
+spec:
+  tags:
+    InstanceType: "trainium"  
+  subnetSelector:
+    karpenter.sh/discovery: volcano-usw2
+  securityGroupSelector:
+    karpenter.sh/discovery: volcano-usw2
+

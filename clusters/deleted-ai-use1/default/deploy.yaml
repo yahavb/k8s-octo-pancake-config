@@ -1,0 +1,32 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: aws-cli
+  labels:
+    app: aws-cli
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: aws-cli
+  template:
+    metadata:
+      labels:
+        app: aws-cli
+    spec:
+      nodeSelector:
+        karpenter.sh/provisioner-name: trainium
+      containers:
+      - name: app
+        image: public.ecr.aws/aws-cli/aws-cli:2.13.1
+        command: ["/bin/sh", "-c"]
+        args: ["while true; do sleep 30; done"]
+        volumeMounts:
+        - name: local-nvme1-vol
+          mountPath: /mnt/nvme1n1
+      volumes:
+      - name: local-nvme1-vol
+        hostPath:
+          path: /mnt/nvme1n1
+        #persistentVolumeClaim:
+        #  claimName: task-pv-claim
