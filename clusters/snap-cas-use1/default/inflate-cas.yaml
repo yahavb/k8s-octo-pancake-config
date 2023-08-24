@@ -13,7 +13,7 @@ spec:
         app: inflate
     spec:
       nodeSelector:
-        alpha.eksctl.io/nodegroup-name: snap-use1-cas-ng
+        alpha.eksctl.io/nodegroup-name: snap-cas-ng
       terminationGracePeriodSeconds: 0
       containers:
         - name: inflate

@@ -1,0 +1,43 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: inflate-karpenter-complex
+spec:
+  replicas: 0
+  selector:
+    matchLabels:
+      app: inflate
+  template:
+    metadata:
+      labels:
+        app: inflate
+    spec:
+      nodeSelector:
+        karpenter.sh/provisioner-name: snap-krp-use1
+      terminationGracePeriodSeconds: 0
+      initContainers:
+        - name: init
+          image: public.ecr.aws/aws-cli/aws-cli:2.13.1
+          command: ["/bin/sh", "-c"]
+          args: ["sleep 30"]
+      containers:
+        - name: app
+          image: public.ecr.aws/aws-cli/aws-cli:2.13.1
+          command: ["/bin/sh", "-c"]
+          args: ["while true; do sleep 30; done"]
+          resources:
+            limits:
+              cpu: 0.5
+              memory: 512Mi
+            requests:
+              cpu: 0.5
+              memory: 512Mi
+        - name: inflate
+          image: public.ecr.aws/eks-distro/kubernetes/pause:3.7
+          resources:
+            limits:
+              cpu: 0.5
+              memory: 512Mi
+            requests:
+              cpu: 0.5
+              memory: 512Mi

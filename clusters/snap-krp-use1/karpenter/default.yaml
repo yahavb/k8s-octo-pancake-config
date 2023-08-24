@@ -1,7 +1,7 @@
 apiVersion: karpenter.sh/v1alpha5
 kind: Provisioner
 metadata:
-  name: default
+  name: snap-krp-use1
 spec:
   requirements:
     - key: karpenter.sh/capacity-type
@@ -18,7 +18,7 @@ spec:
       values: [arm64]
   limits:
     resources:
-      cpu: 1000
+      cpu: 9999
   providerRef:
     name: default
   consolidation: 
@@ -30,6 +30,6 @@ metadata:
   name: default
 spec:
   subnetSelector:
-    karpenter.sh/discovery: snap-use1
+    karpenter.sh/discovery: snap-krp-use1
   securityGroupSelector:
-    karpenter.sh/discovery: snap-use1
+    karpenter.sh/discovery: snap-krp-use1

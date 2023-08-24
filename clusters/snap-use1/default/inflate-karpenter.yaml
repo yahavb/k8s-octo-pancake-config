@@ -20,7 +20,8 @@ spec:
           image: public.ecr.aws/eks-distro/kubernetes/pause:3.7
           resources:
             limits:
-              memory: "1181116032"
+              cpu: 1
+              memory: 1Gi
             requests:
               cpu: 1
               memory: 1Gi
