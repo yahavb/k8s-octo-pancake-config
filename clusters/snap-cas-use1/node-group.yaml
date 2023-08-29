@@ -11,10 +11,8 @@ metadata:
 managedNodeGroups:
 - amiFamily: AmazonLinux2
   instanceTypes: 
-  - c6g.large
-  - c7g.large
-  - m7g.large
-  - m6g.large
+  - c6g.8xlarge
+  - c7g.8xlarge
   name: snap-cas-ng
   desiredCapacity: 0
   minSize: 0
