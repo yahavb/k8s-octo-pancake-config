@@ -164,6 +164,13 @@ spec:
             - --cloud-provider=aws
             - --skip-nodes-with-local-storage=false
             #- --nodes=1:10:snap-use1-cas-ng
+            - --scale-down-utilization-threshold=0.8
+            - --max-node-provision-time=5m
+            - --scale-down-unneeded-time=1s
+            - --scale-down-delay-after-failure=1m
+            - --max-empty-bulk-delete=75
+            - --scale-down-unready-time=1m
+            - --scale-down-delay-after-add=2m
             - --expander=least-waste
             - --node-group-auto-discovery=asg:tag=k8s.io/cluster-autoscaler/enabled,k8s.io/cluster-autoscaler/snap-cas-use1
           volumeMounts:
