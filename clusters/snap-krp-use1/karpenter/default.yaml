@@ -16,9 +16,9 @@ spec:
     - key: kubernetes.io/arch
       operator: In
       values: [arm64]
-#    - key: topology.kubernetes.io/zone
-#      operator: In
-#      values: [us-east-1d]
+    - key: topology.kubernetes.io/zone
+      operator: In
+      values: [us-east-1f]
   limits:
     resources:
       cpu: 9999

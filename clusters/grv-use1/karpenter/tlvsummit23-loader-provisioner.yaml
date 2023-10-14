@@ -1,9 +1,17 @@
 apiVersion: karpenter.sh/v1alpha5
 kind: Provisioner
 metadata:
-  name: apploader
+  name: tlvsummit23loader
 spec:
+  taints:
+  - key: dedicated
+    value: tlvsummit23loader
+    effect: NoSchedule
   requirements:
+#  - key: karpenter.k8s.aws/instance-generation
+#    operator: In
+#    values:
+#    - "7"
 #  - key: karpenter.k8s.aws/instance-cpu
 #    operator: In
 #    values:
@@ -19,7 +27,7 @@ spec:
     - amd64
   limits:
     resources:
-      cpu: 1000
+      cpu: 90000
   providerRef:
     name: default
   ttlSecondsAfterEmpty: 30

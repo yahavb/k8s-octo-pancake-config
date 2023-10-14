@@ -15,7 +15,8 @@ spec:
       labels:
         app: loadsimu
     spec:
-#      nodeSelector:
+      nodeSelector:
+        alpha.eksctl.io/nodegroup-name: lyra-usw2-ng
 #        karpenter.sh/provisioner-name: apploader
       serviceAccountName: appsimulator
       containers:
@@ -27,7 +28,7 @@ spec:
         - name: RADIAN_MAX
           value: "3.14"
         - name: CLIENT_SCALE_RATIO
-          value: "12"
+          value: "10"
           #value: "10" not enough compute for karpenter prov failover
         - name: MIN_AT_CYCLE_START
           value: "1"

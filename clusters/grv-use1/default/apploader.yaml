@@ -6,9 +6,6 @@ metadata:
   name: apploader
   namespace: default
 spec:
-  progressDeadlineSeconds: 600
-  replicas: 2
-  revisionHistoryLimit: 10
   selector:
     matchLabels:
       app: apploader
@@ -22,14 +19,30 @@ spec:
       labels:
         app: apploader
     spec:
+      affinity:
+        nodeAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            nodeSelectorTerms:
+            - matchExpressions:
+              - key: karpenter.sh/provisioner-name
+                operator: In
+                values:
+                - tlvsummit23loader
+      tolerations:
+      - key: dedicated
+        operator: Equal
+        value: tlvsummit23loader
+        effect: NoSchedule 
+      #nodeSelector:
+      #  eks.amazonaws.com/nodegroup: grv-use1-ng
       containers:
       - command:
         - /usr/src/app/app-loader.sh
         env:
         - name: NUM_OF_LOAD_THREADS
-          value: "20"
+          value: "15"
         - name: SLEEP_BETWEEN_CYCLE
-          value: "10"
+          value: "30"
         - name: ARM_APP_URL
           value: http://simplemultiarchapp-627712776.us-east-1.elb.amazonaws.com/app
         - name: AMD_APP_URL

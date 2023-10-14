@@ -12,10 +12,10 @@ spec:
     operator: In 
     values:
     - "2"
-  - key: karpenter.k8s.aws/instance-family
-    operator: In
-    values:
-    - "c6i"
+  #- key: karpenter.k8s.aws/instance-family
+  #  operator: In
+  #  values:
+  #  - "c6i"
   - key: karpenter.sh/capacity-type
     operator: In
     values: 
@@ -26,7 +26,7 @@ spec:
     - amd64
   limits:
     resources:
-      cpu: 1000
+      cpu: 9000
   providerRef:
     name: tlvsummit23amd
   ttlSecondsAfterEmpty: 30

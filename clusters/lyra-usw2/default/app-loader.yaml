@@ -15,7 +15,8 @@ spec:
       labels:
         app: apploader
     spec:
-      #nodeSelector:
+      nodeSelector:
+        alpha.eksctl.io/nodegroup-name: lyra-usw2-ng
       #  karpenter.sh/provisioner-name: apploader
       serviceAccountName: appsimulator
       containers:
@@ -36,10 +37,10 @@ spec:
         imagePullPolicy: Always
         name: apploader
         command: ["/usr/src/app/multiarch-app-loader.sh"]
-        ##resources:
-        #  requests:
-        #    cpu: 1000m
-        #    memory: 512Mi
-        #  limits:
-        #    cpu: 1000m
-        #    memory: 512Mi
+        resources:
+          requests:
+            cpu: 1000m
+            memory: 512Mi
+          limits:
+            cpu: 1000m
+            memory: 512Mi

@@ -3,6 +3,11 @@ kind: Provisioner
 metadata:
   name: tlvsummit23arm
 spec:
+  weight: 20
+#  taints:
+#  - key: dedicated
+#    value: simplemultiarchapp
+#    effect: NoSchedule
   requirements:
   - key: karpenter.k8s.aws/instance-generation
     operator: In
@@ -11,7 +16,7 @@ spec:
   - key: karpenter.k8s.aws/instance-cpu
     operator: In
     values:
-    - "2"
+    - "4"
   - key: karpenter.sh/capacity-type
     operator: In
     values: 
@@ -22,7 +27,7 @@ spec:
     - arm64
   limits:
     resources:
-      cpu: 1000
+      cpu: 20
   providerRef:
     name: default
   ttlSecondsAfterEmpty: 30

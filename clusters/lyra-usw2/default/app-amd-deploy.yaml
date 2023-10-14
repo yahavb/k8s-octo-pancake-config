@@ -25,7 +25,7 @@ spec:
         - name: CW_NS
           value: appsimulator
         - name: MATRIX_DIM
-          value: "50"
+          value: "350"
         - name: POD_IP
           valueFrom:
             fieldRef:
@@ -53,22 +53,24 @@ spec:
         - containerPort: 8000
           protocol: TCP
         readinessProbe:
-          failureThreshold: 3
+          failureThreshold: 10
           httpGet:
             path: /app/health/
             port: 8000
             scheme: HTTP
-          initialDelaySeconds: 3
-          periodSeconds: 3
+          initialDelaySeconds: 10
+          periodSeconds: 10
           successThreshold: 1
-          timeoutSeconds: 1
+          timeoutSeconds: 10
         resources:
           limits:
-            cpu: "4"
+            cpu: "1"
+            memory: "1Gi"
           requests:
             cpu: "1"
-      #nodeSelector:
-      #  karpenter.sh/provisioner-name: tlvsummit23amd
+            memory: "1Gi"
+      nodeSelector:
+        karpenter.sh/provisioner-name: tlvsummit23amd
       restartPolicy: Always
       serviceAccount: appsimulator
       serviceAccountName: appsimulator

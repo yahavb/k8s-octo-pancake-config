@@ -1,0 +1,47 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: perceiver-trn
+  name: perceiver-trn
+spec:
+  selector:
+    matchLabels:
+      app: perceiver-trn
+  template:
+    metadata:
+      labels:
+        app: perceiver-trn
+    spec:
+      nodeSelector:
+        karpenter.sh/provisioner-name: amd-neuron
+      volumes:
+      - name: dshm
+        emptyDir:
+          medium: Memory
+      containers:
+      - name: app
+        image: 133573815653.dkr.ecr.us-west-2.amazonaws.com/perceiver:amd64-neuron
+        imagePullPolicy: Always
+        volumeMounts:
+          - mountPath: /dev/shm
+            name: dshm
+        command: ["/start.sh"]
+        resources:
+          limits:
+            aws.amazon.com/neuron: 16
+        env:
+        - name: DATASET_DIR
+          value: "/dataset"
+        - name: AWS_NEURON_VISIBLE_DEVICES
+          value: "ALL"
+        - name: MALLOC_ARENA_MAX
+          value: "32"
+        - name: NPROC_PER_NODE
+          value: "32"
+        - name: MAX_STEPS
+          value: "100" 
+        - name: BATCH_SIZE
+          value: "1"
+        - name: SUPPORTED_INSTANCES
+          value: "trn1n.32xlarge"

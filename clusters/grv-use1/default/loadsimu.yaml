@@ -20,6 +20,22 @@ spec:
       labels:
         app: loadsimu
     spec:
+      affinity:
+        nodeAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            nodeSelectorTerms:
+            - matchExpressions:
+              - key: karpenter.sh/provisioner-name
+                operator: In
+                values:
+                - tlvsummit23loader
+      tolerations:
+      - key: dedicated
+        operator: Equal
+        value: tlvsummit23loader
+        effect: NoSchedule
+      #nodeSelector:
+      #  eks.amazonaws.com/nodegroup: grv-use1-ng
       containers:
       - command:
         - /usr/src/app/appsimulator.sh
@@ -31,7 +47,8 @@ spec:
         - name: RADIAN_MAX
           value: "3.14"
         - name: CLIENT_SCALE_RATIO
-          value: "1"
+          # was 1 11% cpu, 2 is 23%
+          value: "10"
         - name: MIN_AT_CYCLE_START
           value: "1"
         - name: CLIENT_DEPLOY_PREFIX
