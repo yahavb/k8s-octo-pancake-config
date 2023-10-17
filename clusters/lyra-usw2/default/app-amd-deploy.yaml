@@ -22,6 +22,8 @@ spec:
       - command:
         - /usr/src/app/start.sh
         env:
+        - name: DEPLOY_NAME
+          value: "amdsimplemultiarchapp"
         - name: CW_NS
           value: appsimulator
         - name: MATRIX_DIM

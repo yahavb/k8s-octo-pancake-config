@@ -30,6 +30,29 @@ spec:
       #nodeSelector:
       #  karpenter.sh/provisioner-name: tlvsummit23amd
       serviceAccountName: appsimulator
+      initContainers:
+      - name: pod-delete-cost
+        image: 907513986313.dkr.ecr.us-west-2.amazonaws.com/simplemultiarchimage:multiarch-py3
+        imagePullPolicy: Always
+        command:
+        - /bin/bash
+        - "-exc"
+        - |
+          set -x
+          NODE_CPU_ARCH=$(kubectl get node/$NODE_NAME -L beta.kubernetes.io/arch --no-headers| awk '{print $NF}')
+          if [ $NODE_CPU_ARCH = "arm64" ]
+          then
+            kubectl annotate pod $POD_NAME controller.kubernetes.io/pod-deletion-cost="100"
+          fi
+        env:
+        - name: NODE_NAME
+          valueFrom:
+            fieldRef:
+              fieldPath: spec.nodeName
+        - name: POD_NAME
+          valueFrom:
+            fieldRef:
+              fieldPath: metadata.name
       containers:
       - name: app
         env:

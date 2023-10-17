@@ -14,7 +14,8 @@ spec:
     type: RollingUpdate
   template:
     metadata:
-      creationTimestamp: null
+      annotations:
+        controller.kubernetes.io/pod-deletion-cost: "100"
       labels:
         app: armsimplemultiarchapp
     spec:
@@ -22,6 +23,8 @@ spec:
       - command:
         - /usr/src/app/start.sh
         env:
+        - name: DEPLOY_NAME
+          value: "armsimplemultiarchapp"
         - name: CW_NS
           value: appsimulator
         - name: MATRIX_DIM

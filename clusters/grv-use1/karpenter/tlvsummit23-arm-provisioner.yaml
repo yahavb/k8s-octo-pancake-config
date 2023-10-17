@@ -27,7 +27,7 @@ spec:
     - arm64
   limits:
     resources:
-      cpu: 20
+      cpu: 30
   providerRef:
     name: default
   ttlSecondsAfterEmpty: 30
