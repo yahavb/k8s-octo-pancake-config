@@ -3,8 +3,8 @@ kind: Pod
 metadata:
   name: cmd-shell
 spec:
-  nodeSelector:
-    karpenter.sh/provisioner-name: trainium
+  #nodeSelector:
+  # karpenter.sh/provisioner-name: trainium
   containers:
   - name: app
     image: public.ecr.aws/aws-cli/aws-cli:2.13.1

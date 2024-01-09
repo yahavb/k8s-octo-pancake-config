@@ -1,0 +1,14 @@
+export AWS_ACCOUNT_ID=$(aws sts get-caller-identity --output text --query Account)
+export AWS_REGION=eu-west-1
+export AWS_DEFAULT_REGION=eu-west-1
+export BUILDX_VER=v0.10.3
+export APP_IMAGE_NAME=simplemultiarchimage
+export APP_IMAGE_TAG=multiarch-py3
+export APP_IMAGE_ARM_TAG=multiarch-py3-arm
+export APP_IMAGE_AMD_TAG=multiarch-py3-amd
+export CLUSTER_NAME=grv-use1
+export GITHUB_USER=yahavb
+export GITHUB_BRANCH=main
+export GITHUB_REPO=app-health-with-aws-load-balancer-controller
+export TEMPOUT=$(mktemp)
+export CLUSTER_NAME=grv-euw1

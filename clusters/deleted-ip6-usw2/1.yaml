@@ -1,0 +1,12 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: centos
+spec:
+  nodeSelector:
+    karpenter.sh/provisioner-name: stk
+  containers:
+  - name: network-multitool
+    imagePullPolicy: IfNotPresent
+    command: ["sh", "-c", "trap : TERM INT; sleep infinity & wait"]
+    image: praqma/network-multitool

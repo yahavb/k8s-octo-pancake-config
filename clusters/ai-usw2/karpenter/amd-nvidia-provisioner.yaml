@@ -6,7 +6,7 @@ spec:
   requirements:
     - key: karpenter.k8s.aws/instance-family
       operator: In
-      values: ["g5","p5"]
+      values: ["g5"]
     - key: kubernetes.io/arch
       operator: In
       values: ["amd64"]
@@ -21,7 +21,7 @@ metadata:
   name: amd-nvidia
 spec:
   subnetSelector:
-    karpenter.sh/discovery: ai-usw2
+    karpenter.sh/subnet/discovery: ai-usw2-public
   securityGroupSelector:
     karpenter.sh/discovery: ai-usw2
 #  amiSelector:

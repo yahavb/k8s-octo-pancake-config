@@ -36,11 +36,11 @@ spec:
         - name: AWS_NEURON_VISIBLE_DEVICES
           value: "ALL"
         - name: MALLOC_ARENA_MAX
-          value: "32"
+          value: "16"
         - name: NPROC_PER_NODE
-          value: "32"
+          value: "16"
         - name: MAX_STEPS
-          value: "100" 
+          value: "2" 
         - name: BATCH_SIZE
           value: "1"
         - name: SUPPORTED_INSTANCES

@@ -1,0 +1,56 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: armsimplemultiarchapp
+  namespace: default
+spec:
+  selector:
+    matchLabels:
+      app: armsimplemultiarchapp
+  template:
+    metadata:
+      labels:
+        app: armsimplemultiarchapp
+    spec:
+      nodeSelector:
+        karpenter.sh/provisioner-name: tlvsummit23arm
+      serviceAccountName: appsimulator
+      containers:
+      - name: app
+        env:
+        - name: ARCH
+          value: "aarch64"
+        - name: CW_NS
+          value: "appsimulator"
+        - name: MATRIX_DIM
+          value: "500"
+        - name: POD_IP
+          valueFrom:
+            fieldRef:
+              fieldPath: status.podIP
+        - name: POD_NAME
+          valueFrom:
+            fieldRef:
+              fieldPath: metadata.name
+        image: 907513986313.dkr.ecr.eu-west-1.amazonaws.com/simplemultiarchimage:multiarch-py3
+        imagePullPolicy: Always
+        command: ["/usr/src/app/start.sh"]
+        resources:
+          requests:
+            cpu: 1000m
+          limits:
+            cpu: 4000m
+        ports:
+          - containerPort: 8000
+        livenessProbe:
+          httpGet:
+            path: /app/health/
+            port: 8000
+          initialDelaySeconds: 5
+          periodSeconds: 5
+        readinessProbe:
+          httpGet:
+            path: /app/health/
+            port: 8000
+          initialDelaySeconds: 5
+          periodSeconds: 5
