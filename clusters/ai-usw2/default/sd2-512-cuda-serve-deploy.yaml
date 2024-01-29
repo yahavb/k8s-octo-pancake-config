@@ -2,19 +2,19 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   labels:
-    app: sd21-inf2-serve
-  name: sd21-inf2-serve
+    app: sd21-g5-serve
+  name: sd21-g5-serve
 spec:
   selector:
     matchLabels:
-      app: sd21-inf2-serve
+      app: sd21-g5-serve
   template:
     metadata:
       labels:
-        app: sd21-inf2-serve
+        app: sd21-g5-serve
     spec:
       nodeSelector:
-        karpenter.sh/provisioner-name: amd-neuron
+        karpenter.sh/provisioner-name: amd-nvidia
       serviceAccountName: appsimulator
       volumes:
       - name: dshm
@@ -22,7 +22,7 @@ spec:
           medium: Memory
       initContainers:
       - name: pull-model-tar
-        image: 133573815653.dkr.ecr.us-west-2.amazonaws.com/stablediffusion:amd64-neuron-assets
+        image: 133573815653.dkr.ecr.us-west-2.amazonaws.com/stablediffusion:amd64-cuda-assets
         imagePullPolicy: Always
         volumeMounts:
         - name: workdir
@@ -36,7 +36,7 @@ spec:
           wget https://sdinfer.s3.us-west-2.amazonaws.com/${model}_xla.tar.gz -O /model/model.tar.gz
       containers:
       - name: app
-        image: 133573815653.dkr.ecr.us-west-2.amazonaws.com/stablediffusion:amd64-neuron
+        image: 133573815653.dkr.ecr.us-west-2.amazonaws.com/stablediffusion:amd64-cuda
         imagePullPolicy: Always
         volumeMounts:
           - mountPath: /dev/shm
@@ -47,8 +47,7 @@ spec:
         args: ["run"]
         resources:
           limits:
-            aws.amazon.com/neuron: 2
-            #karpenter.k8s.aws/instance-accelerator-count: 1
+            nvidia.com/gpu: 1
         lifecycle:
           postStart:
             exec:
@@ -57,10 +56,8 @@ spec:
             exec:
               command: ["/bin/sh","-c","kubectl delete svc `kubectl get svc|grep $POD_NAME | awk '{print $1}'`"]
         env:
-        - name: AWS_NEURON_VISIBLE_DEVICES
-          value: "ALL"
         - name: DEVICE
-          value: "xla"
+          value: "cuda"
         - name: BUCKET
           value: "sdinfer"
         - name: MODEL_ID
