@@ -57,6 +57,15 @@ spec:
           preStop:
             exec:
               command: ["/bin/sh","-c","kubectl delete svc `kubectl get svc|grep $POD_NAME | awk '{print $1}'`"]
+        ports:
+          - containerPort: 8000
+            protocol: TCP
+        readinessProbe:
+          httpGet:
+            path: /readiness
+            port: 8000
+          initialDelaySeconds: 60
+          periodSeconds: 10
         env:
         - name: DEVICE
           value: "cuda"

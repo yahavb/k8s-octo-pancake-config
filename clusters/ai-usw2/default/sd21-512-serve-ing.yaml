@@ -16,6 +16,8 @@ metadata:
     alb.ingress.kubernetes.io/backend-protocol: HTTP
     alb.ingress.kubernetes.io/load-balancer-name: sd21mulitaccelserve
     alb.ingress.kubernetes.io/target-group-attributes: stickiness.enabled=true,stickiness.lb_cookie.duration_seconds=60
+    alb.ingress.kubernetes.io/actions.forward-multiple-tg: >
+      {"type":"forward","forwardConfig":{"targetGroups":[{"serviceName":"sd21-512-cuda-svc","servicePort":80,"weight":50},{"serviceName":"sd21-512-xla-svc","servicePort":80,"weight":50}],"targetGroupStickinessConfig":{"enabled":true,"durationSeconds":200}}}
   labels:
     app: sd21-inf2-serve-ingress
 spec:
@@ -27,6 +29,6 @@ spec:
           pathType: Prefix
           backend:
             service: 
-              name: sd21-512-xla-svc
+              name: forward-multiple-tg
               port: 
-                number: 80
+                name: use-annotation
